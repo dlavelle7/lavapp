@@ -8,4 +8,4 @@ class User(db.Model):
     password = db.Column(db.String(64))
 
     def __repr__(self):
-        return "<User {0}>".format(self.name)
+        return "<User {0}>".format(self.username)
