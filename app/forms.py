@@ -1,7 +1,8 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField
+from wtforms import StringField, BooleanField, PasswordField
 from wtforms.validators import DataRequired
 
 
 class LoginForm(Form):
-    login = StringField('login', validators=[DataRequired()])
+    username = StringField('username', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])

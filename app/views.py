@@ -10,6 +10,7 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        flash("Login data: {0}".format(form.login.data))
+        flash("Login data: {0}, {1}".format(
+            form.username.data, form.password.data))
         return redirect('/')
     return render_template('login.html', title="Sign In", form=form)
