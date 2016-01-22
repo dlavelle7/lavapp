@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, EqualTo
 class LoginForm(Form):
     username = StringField('username', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
+    remember = BooleanField('remember', default=False)
 
 
 class RegisterForm(Form):
