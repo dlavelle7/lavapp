@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, flash, redirect, g, url_for, session
 from app.forms import LoginForm, RegisterForm
-from flask.ext.login import current_user, login_required, login_user
+from flask.ext.login import current_user, login_required, login_user, logout_user
 from app.models import User
 from app import db
 
@@ -52,6 +52,6 @@ def register():
     return render_template('register.html', title="Sign Up", form=form)
 
 @app.route('/logout')
-def logout(self):
+def logout():
     logout_user()
     return redirect(url_for('login'))

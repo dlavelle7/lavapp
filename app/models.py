@@ -24,3 +24,7 @@ class User(db.Model):
 
     def __repr__(self):
         return "<User {0}>".format(self.username)
+
+    @staticmethod
+    def get(user_id):
+        return User.query.get(user_id)
