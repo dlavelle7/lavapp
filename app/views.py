@@ -5,9 +5,9 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 from app.models import User
 from app import db
 
-@app.before_request
-def before_request():
-    g.user = current_user
+#@app.before_request
+#def before_request():
+#    pass
 
 @app.login_manager.user_loader
 def load_user(user_id):
@@ -20,14 +20,11 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if g.user and g.user.is_authenticated:
+    if current_user and current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         session['remember_me'] = form.remember.data
-
-        #flash("Login data: {0}, {1}, {2}".format(
-        #    form.username.data, form.password.data, form.remember.data))
 
         user = User.query.filter(User.username == form.username.data).first()
         if user.password == form.password.data:
@@ -46,8 +43,6 @@ def register():
         db.session.commit()
         login_user(user)
 
-        #flash("Register data: {0}, {1}".format(
-        #    form.username.data, form.password.data))
         return redirect('/')
     return render_template('register.html', title="Sign Up", form=form)
 
