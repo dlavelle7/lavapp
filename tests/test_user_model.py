@@ -3,6 +3,7 @@ import unittest
 from app import app, db
 from app.models import User
 from config import basedir
+from sqlalchemy.exc import IntegrityError
 
 
 class TestCase(unittest.TestCase):
@@ -33,7 +34,7 @@ class TestCase(unittest.TestCase):
         # Try create another john
         john2 = User(username='john', password='password')
         db.session.add(john2)
-        self.assertRaises(Exception, db.session.commit)
+        self.assertRaises(IntegrityError, db.session.commit)
         db.session.rollback()
 
         all_johns = User.query.filter(User.username == user.username).all()

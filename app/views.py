@@ -4,6 +4,7 @@ from app.forms import LoginForm, RegisterForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from app.models import User
 from app import db
+from sqlalchemy.exc import IntegrityError
 
 #@app.before_request
 #def before_request():
@@ -27,7 +28,7 @@ def login():
         session['remember_me'] = form.remember.data
 
         user = User.query.filter(User.username == form.username.data).first()
-        if user.password == form.password.data:
+        if user.check_password(form.password.data):
             login_user(user)
 
         return redirect(url_for('index'))
@@ -40,7 +41,13 @@ def register():
 
         user = User(username=form.username.data, password=form.password.data)
         db.session.add(user)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return render_template('register.html', title="Sign Up", form=form)
+
         login_user(user)
 
         return redirect('/')
