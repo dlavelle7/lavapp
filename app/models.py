@@ -1,4 +1,5 @@
 from app import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(db.Model):
@@ -6,6 +7,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(64))
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = self.create_password(password)
 
     @property
     def is_authenticated(self):
@@ -19,8 +24,14 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
+    def create_password(self, password):
+        return generate_password_hash(password)
+
     def get_id(self):
         return unicode(self.id)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
     def __repr__(self):
         return "<User {0}>".format(self.username)

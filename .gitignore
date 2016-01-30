@@ -3,3 +3,4 @@
 *.swp
 app.db
 db_repository/*
+test.db
