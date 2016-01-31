@@ -28,10 +28,10 @@ def login():
         session['remember_me'] = form.remember.data
 
         user = User.query.filter(User.username == form.username.data).first()
-        if user.check_password(form.password.data):
+        if user and user.check_password(form.password.data):
             login_user(user)
-
-        return redirect(url_for('index'))
+            return redirect(url_for('index'))
+        flash('Incorrect login details')
     return render_template('login.html', title="Sign In", form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
