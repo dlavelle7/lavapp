@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, flash, redirect, g, url_for, session
-from app.forms import LoginForm, RegisterForm
+from app.forms import LoginForm, RegisterForm, ForgotForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from app.models import User
 from app import db
@@ -25,7 +25,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        session['remember_me'] = form.remember.data
+        #session['remember_me'] = form.remember.data
 
         user = User.query.filter(User.username == form.username.data).first()
         if user and user.check_password(form.password.data):
@@ -59,3 +59,10 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@app.route('/forgot', methods=['GET', 'POST'])
+def forgot():
+    form = ForgotForm()
+    if form.validate_on_submit():
+        flash('{0}'.format(form.forgot.data))
+    return render_template('forgot.html', title="Forgot Password", form=form)
