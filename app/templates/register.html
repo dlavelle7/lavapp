@@ -21,6 +21,12 @@
     {% endfor %}<br>
         {{form.repeat_pass}}
     </p>
+    <p>Email
+    {% for error in form.email.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}<br>
+        {{form.email}}
+    </p>
     <p>
         <input type="submit" value="Register">
     </p>

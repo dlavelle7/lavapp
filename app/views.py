@@ -39,12 +39,14 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
 
-        user = User(username=form.username.data, password=form.password.data)
+        user = User(username=form.username.data, password=form.password.data,
+                email=form.email.data)
         db.session.add(user)
 
         try:
             db.session.commit()
-        except IntegrityError:
+        except IntegrityError as e:
+            print e
             db.session.rollback()
             return render_template('register.html', title="Sign Up", form=form)
 
