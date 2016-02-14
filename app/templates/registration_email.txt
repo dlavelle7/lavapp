@@ -1,0 +1,8 @@
+Dear {{user.username}},
+
+Thanks for registering.
+
+Regards,
+
+
+Team Lavapp

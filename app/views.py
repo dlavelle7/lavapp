@@ -5,7 +5,7 @@ from flask.ext.login import current_user, login_required, login_user, logout_use
 from app.models import User
 from app import db
 from sqlalchemy.exc import IntegrityError
-from app.emails import send_email
+from app.emails import send_registration_email
 
 #@app.before_request
 #def before_request():
@@ -51,7 +51,7 @@ def register():
             db.session.rollback()
             return render_template('register.html', title="Sign Up", form=form)
 
-        send_email("Lavapp registration", [user.email], "Thanks for registering", "<b>Thanks for registering</b>")
+        send_registration_email(user)
         login_user(user)
 
         return redirect('/')
