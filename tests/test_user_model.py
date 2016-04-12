@@ -28,8 +28,8 @@ class TestCase(unittest.TestCase):
         self.assertEqual(user.username, 'john')
         self.assertEqual(user.email, 'john@foo.com')
         self.assertNotEqual(user.password, 'pass')
-        self.assertFalse(user.check_password('foo'))
-        self.assertTrue(user.check_password('pass'))
+        self.assertFalse(user.verify_password('foo'))
+        self.assertTrue(user.verify_password('pass'))
         self.assertEqual(user.get_id(), u'1')
 
         # Retrieve user
@@ -38,8 +38,8 @@ class TestCase(unittest.TestCase):
         self.assertEqual(user.username, 'john')
         self.assertEqual(user.email, 'john@foo.com')
         self.assertNotEqual(user.password, 'pass')
-        self.assertFalse(user.check_password('foo'))
-        self.assertTrue(user.check_password('pass'))
+        self.assertFalse(user.verify_password('foo'))
+        self.assertTrue(user.verify_password('pass'))
         
         # Try create another john
         john2 = User(username='john', password='password', email='john22@bar.com')

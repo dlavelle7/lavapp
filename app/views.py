@@ -26,10 +26,10 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
+        # TODO: Remember me
         #session['remember_me'] = form.remember.data
-
         user = User.query.filter(User.username == form.username.data).first()
-        if user and user.check_password(form.password.data):
+        if user and user.verify_password(form.password.data):
             login_user(user)
             return redirect(url_for('index'))
         flash('Incorrect login details')
@@ -39,7 +39,6 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-
         user = User(username=form.username.data, password=form.password.data,
                 email=form.email.data)
         db.session.add(user)

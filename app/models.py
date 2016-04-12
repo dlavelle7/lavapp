@@ -1,5 +1,5 @@
 from app import db
-from werkzeug.security import generate_password_hash, check_password_hash
+from passlib.hash import pbkdf2_sha256
 
 
 class User(db.Model):
@@ -11,7 +11,7 @@ class User(db.Model):
 
     def __init__(self, username, password, email):
         self.username = username
-        self.password = self.create_password(password)
+        self.password = self.create_password_hash(password)
         self.email = email
 
     @property
@@ -26,14 +26,15 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
-    def create_password(self, password):
-        return generate_password_hash(password)
+    def create_password_hash(self, password):
+        """Generate password hash with salt"""
+        return pbkdf2_sha256.encrypt(password, rounds=1000, salt_size=16)
 
     def get_id(self):
         return unicode(self.id)
 
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
+    def verify_password(self, password):
+        return pbkdf2_sha256.verify(password, self.password)
 
     def __repr__(self):
         return "<User {0}>".format(self.username)
