@@ -1,7 +1,13 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+if os.environ.get('DATABASE_URL') is None:
+    # Path to sqlite db file for local development
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+else:
+    # Heroku sets an env var named $DATABASE_URL
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 

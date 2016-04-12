@@ -14,5 +14,9 @@ lm.login_view = 'login'
 admin = Admin(app, name='lavapp', template_mode='bootstrap3')
 mail = Mail(app)
 
+# TODO: Logging
+#if os.environ.get('HEROKU') is not None:
+#else:
+
 from app import views, models
 admin.add_view(ModelView(models.User, db.session))
