@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Personal Budgeting</h2>
+<h3>Income</h3>
+    <form action="" method="post" name="income">
+        {{form.hidden_tag()}} <!-- Implements CSRF prevention -->
+        <p>Income name
+        {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+            {{form.name}}
+        </p>
+        <p>Income period
+        {% for error in form.period.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+            {{form.period}}
+        </p>
+        <p>Income amount (net)
+        {% for error in form.amount.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+            {{form.amount}}
+        </p>
+        <p>
+            <input type="submit" value="Create income">
+        </p>
+    </form>
+<hr>
+<h3>Expenditure</h3>
+
+{% endblock %}

@@ -8,6 +8,7 @@ class User(db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(64))
     email = db.Column(db.String(64))
+    incomes = db.relationship("MonthlyIncome", backref='user')
 
     def __init__(self, username, password, email):
         self.username = username
@@ -42,3 +43,13 @@ class User(db.Model):
     @staticmethod
     def get(user_id):
         return User.query.get(user_id)
+
+
+# TODO: Split model modules
+# TODO: Subclass this with YearlyIncome too
+class MonthlyIncome(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    amount = db.Column(db.Float)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

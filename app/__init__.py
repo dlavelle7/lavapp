@@ -20,3 +20,4 @@ mail = Mail(app)
 
 from app import views, models
 admin.add_view(ModelView(models.User, db.session))
+admin.add_view(ModelView(models.MonthlyIncome, db.session))

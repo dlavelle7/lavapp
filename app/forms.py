@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
-from wtforms import StringField, BooleanField, PasswordField, TextField
+from wtforms import StringField, BooleanField, PasswordField, TextField, \
+        SelectField, DecimalField, FloatField
 from wtforms.validators import DataRequired, EqualTo, Email
 
 
@@ -18,3 +19,14 @@ class RegisterForm(Form):
 
 class ForgotForm(Form):
     forgot = StringField('forgot', validators=[DataRequired(), Email()])
+
+
+class IncomeForm(Form):
+    periodic_choices = [('weekly', 'weekly'), ('monthly', 'monthly')]
+
+    name = StringField('name', validators=[DataRequired()])
+    period = SelectField('period', choices=periodic_choices)
+    # TODO: Which one?
+    #amount = DecimalField('amount', places='2', rounding=None,
+    #        validators=[DataRequired()])
+    amount = FloatField('period', validators=[DataRequired()])

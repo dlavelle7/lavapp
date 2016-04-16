@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Forgot Password</h1>
-<form action="" method="post" name="register">
+<h2>Forgot Password</h2>
+<form action="" method="post" name="forgot">
     {{form.hidden_tag()}} <!-- Implements CSRF prevention -->
     <p>Enter email
     {% for error in form.forgot.errors %}
