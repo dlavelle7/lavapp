@@ -53,7 +53,7 @@ def register():
         send_registration_email(user)
         login_user(user)
 
-        return redirect('/')
+        return redirect(url_for('index'))
     return render_template('register.html', title="Sign Up", form=form)
 
 @app.route('/logout')
@@ -83,7 +83,7 @@ def budgeting():
         except Exception as e:
             print e
             db.session.rollback()
-            return render_template('budgeting.html', title="Budgeting",
-                    form=form)
+            return redirect(url_for('budgeting'))
 
+        return redirect(url_for('budgeting'))
     return render_template('budgeting.html', title="Budgeting", form=form)

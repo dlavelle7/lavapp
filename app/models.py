@@ -1,5 +1,6 @@
 from app import db
 from passlib.hash import pbkdf2_sha256
+import datetime
 
 
 class User(db.Model):
@@ -46,10 +47,17 @@ class User(db.Model):
 
 
 # TODO: Split model modules
-# TODO: Subclass this with YearlyIncome too
+# TODO: Subclass this with WeeklyIncome too
 class MonthlyIncome(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     amount = db.Column(db.Float)
+    date_created = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __init__(self, name, amount, user_id):
+        self.name = name
+        self.amount = amount
+        self.user_id = user_id
+        self.date_created = datetime.datetime.now()

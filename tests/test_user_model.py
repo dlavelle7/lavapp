@@ -51,12 +51,3 @@ class TestUser(unittest.TestCase):
         all_johns = User.query.filter(User.username == user.username).all()
         self.assertTrue(len(all_johns), 1)
         self.assertEqual(user, all_johns[0])
-
-        # Try to create a duplicate email
-        dup_email = User(username='jane', password='doe', email='john@foo.com')
-        db.session.add(dup_email)
-        self.assertRaises(IntegrityError, db.session.commit)
-        db.session.rollback()
-
-        all_users = User.query.filter(User.username == user.username).all()
-        self.assertTrue(len(all_users), 1)

@@ -26,7 +26,5 @@ class IncomeForm(Form):
 
     name = StringField('name', validators=[DataRequired()])
     period = SelectField('period', choices=periodic_choices)
-    # TODO: Which one?
-    #amount = DecimalField('amount', places='2', rounding=None,
-    #        validators=[DataRequired()])
-    amount = FloatField('period', validators=[DataRequired()])
+    amount = DecimalField('amount', places='2', rounding=None,
+            validators=[DataRequired()])
