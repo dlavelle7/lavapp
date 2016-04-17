@@ -2,32 +2,66 @@
 {% block content %}
 
 <h2>Personal Budgeting</h2>
+<h3>Summary</h3>
+<p>Incomes - Expenditure, Graphs</p>
+
 <h3>Income</h3>
+<h4>Current Incomes</h4>
+<table class="table table-hover">
+    <tr>
+        <th>Income name</th>
+        <th>Date created</th>
+        <th>Income amount</th>
+        <th></th>
+    </tr>
+{% for income in current_user.incomes %}
+<tr>
+    <td>{{income.name}}</td>
+    <td>{{income.date_created}}</td>
+    <td>{{income.amount}}</td>
+    <td>
+        <input class="btn btn-danger" type="submit" value="Delete">
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+<hr>
+<h4>Add New Income</h4>
+<table class="table table-bordered">
+    <tr>
+        <th>Income name</th>
+        <th>Income period</th>
+        <th>Income amount</th>
+        <th></th>
+    </tr>
+    <tr>
     <form action="" method="post" name="income">
         {{form.hidden_tag()}} <!-- Implements CSRF prevention -->
-        <p>Income name
+        <td>
         {% for error in form.name.errors %}
             <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
+        {% endfor %}
             {{form.name}}
-        </p>
-        <p>Income period
+        </td>
+        <td>
         {% for error in form.period.errors %}
             <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
+        {% endfor %}
             {{form.period}}
-        </p>
-        <p>Income amount (net)
+        </td>
+        <td>
         {% for error in form.amount.errors %}
             <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}<br>
+        {% endfor %}
             {{form.amount}}
-        </p>
-        <p>
-            <input type="submit" value="Create income">
-        </p>
+        </td>
+        <td>
+            <input class="btn btn-primary" type="submit" value="Submit">
+        </td>
     </form>
-<hr>
+    </tr>
+</table>
 <h3>Expenditure</h3>
 
 {% endblock %}
