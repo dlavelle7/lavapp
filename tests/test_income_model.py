@@ -1,7 +1,7 @@
 import os
 import unittest
 from app import app, db
-from app.models import User, MonthlyIncome
+from app.models import User, Income
 from config import basedir
 
 
@@ -27,17 +27,17 @@ class TestUser(unittest.TestCase):
         db.session.commit()
 
         # Create a new income
-        mincome = MonthlyIncome(name='salary', amount=4321.09, user_id=user.id)
+        mincome = Income(name='salary', amount=4321.09, user_id=user.id)
         db.session.add(mincome)
         db.session.commit()
         self.assertTrue(mincome in user.incomes)
 
-        mincome = MonthlyIncome.query.filter(MonthlyIncome.name == 'salary').first()
+        mincome = Income.query.filter(Income.name == 'salary').first()
         self.assertEquals(mincome.name, 'salary')
         self.assertEquals(mincome.amount, 4321.09)
         self.assertEquals(mincome.user_id, 1)
 
-        mincome2 = MonthlyIncome(name='investment', amount=123, user_id=user.id)
+        mincome2 = Income(name='investment', amount=123, user_id=user.id)
         db.session.add(mincome2)
         db.session.commit()
         self.assertTrue(mincome2 in user.incomes)

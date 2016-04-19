@@ -2,7 +2,7 @@ from app import app
 from flask import render_template, flash, redirect, g, url_for, session
 from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
-from app.models import User, MonthlyIncome
+from app.models import User, Income
 from app import db
 from sqlalchemy.exc import IntegrityError
 from app.emails import send_registration_email
@@ -75,7 +75,7 @@ def budgeting():
     form = IncomeForm()
     if form.validate_on_submit():
         # TODO: Handle income period
-        income = MonthlyIncome(name=form.name.data, amount=form.amount.data,
+        income = Income(name=form.name.data, amount=form.amount.data,
                 user_id=current_user.id)
         try:
             db.session.add(income)
@@ -87,3 +87,16 @@ def budgeting():
 
         return redirect(url_for('budgeting'))
     return render_template('budgeting.html', title="Budgeting", form=form)
+
+@app.route('/delete/income/<int:income_id>', methods=['POST'])
+def delete_income(income_id):
+    # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
+    income = Income.query.get(income_id)
+    if income:
+        try:
+            db.session.delete(income)
+            db.session.commit()
+        except Exception as e:
+            print e
+            db.session.rollback()
+    return redirect(url_for('budgeting'))

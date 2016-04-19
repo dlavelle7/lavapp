@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- TODO: Break into sub templates -->
 <h2>Personal Budgeting</h2>
 <h3>Summary</h3>
 <p>Incomes - Expenditure, Graphs</p>
@@ -20,7 +21,9 @@
     <td>{{income.date_created}}</td>
     <td>{{income.amount}}</td>
     <td>
-        <input class="btn btn-danger" type="submit" value="Delete">
+        <form action="{{url_for('delete_income', income_id=income.id)}}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+        </form>
     </td>
 </tr>
 {% endfor %}

@@ -9,7 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(64))
     email = db.Column(db.String(64))
-    incomes = db.relationship("MonthlyIncome", backref='user')
+    incomes = db.relationship("Income", backref='user')
 
     def __init__(self, username, password, email):
         self.username = username
@@ -48,7 +48,7 @@ class User(db.Model):
 
 # TODO: Split model modules
 # TODO: Subclass this with WeeklyIncome too
-class MonthlyIncome(db.Model):
+class Income(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
