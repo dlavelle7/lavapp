@@ -22,7 +22,9 @@
     <td>{{income.total}}</td>
     <td>
         <form action="{{url_for('delete_income', income_id=income.id)}}" method="POST">
-            <input class="btn btn-danger" type="submit" value="Delete">
+            <button class="btn btn-danger" type="submit">
+                <i class="icon-remove icon-white"></i>
+            </button>
         </form>
     </td>
 </tr>
@@ -30,6 +32,7 @@
 </table>
 
 <hr>
+<!-- TODO: Split into separate 'income' view' -->
 <h4>Add New Income</h4>
 <table class="table table-bordered">
     <tr>
@@ -57,11 +60,15 @@
             {{form.amount}}
         </td>
         <td>
-            <input class="btn btn-primary" type="submit" value="Submit">
+            <button class="btn btn-primary" type="submit">
+                <i class="icon-plus icon-white"></i>
+            </button>
         </td>
     </form>
     </tr>
 </table>
+
+<!-- TODO: Split into separate 'expense' view' -->
 <h3>Expenditure</h3>
 
 {% endblock %}
