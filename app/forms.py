@@ -22,7 +22,8 @@ class ForgotForm(Form):
 
 
 class IncomeForm(Form):
-    periodic_choices = [('weekly', 'weekly'), ('monthly', 'monthly')]
+    periodic_choices = [('weekly', 'Weekly'), ('monthly', 'Monthly'),
+            ('yearly', 'Yearly')]
 
     name = StringField('name', validators=[DataRequired()])
     period = SelectField('period', choices=periodic_choices)

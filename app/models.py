@@ -47,17 +47,27 @@ class User(db.Model):
 
 
 # TODO: Split model modules
-# TODO: Subclass this with WeeklyIncome too
 class Income(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     amount = db.Column(db.Float)
     date_created = db.Column(db.DateTime)
+    period = db.Column(db.String(64))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, name, amount, user_id):
+    def __init__(self, name, amount, user_id, period):
         self.name = name
         self.amount = amount
         self.user_id = user_id
         self.date_created = datetime.datetime.now()
+        self.period = period
+
+    @property
+    def total(self):
+        if self.period == "weekly":
+            return self.amount * 4
+        elif self.period == "yearly":
+            return self.amount / 56
+        else:
+            return self.amount

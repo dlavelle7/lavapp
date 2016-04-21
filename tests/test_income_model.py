@@ -27,19 +27,31 @@ class TestUser(unittest.TestCase):
         db.session.commit()
 
         # Create a new income
-        mincome = Income(name='salary', amount=4321.09, user_id=user.id)
-        db.session.add(mincome)
+        income = Income(name='salary', amount=4321.09, user_id=user.id,
+                period='weekly')
+        db.session.add(income)
         db.session.commit()
-        self.assertTrue(mincome in user.incomes)
+        self.assertTrue(income in user.incomes)
 
-        mincome = Income.query.filter(Income.name == 'salary').first()
-        self.assertEquals(mincome.name, 'salary')
-        self.assertEquals(mincome.amount, 4321.09)
-        self.assertEquals(mincome.user_id, 1)
+        income = Income.query.filter(Income.name == 'salary').first()
+        self.assertEquals(income.name, 'salary')
+        self.assertEquals(income.amount, 4321.09)
+        self.assertEquals(income.user_id, 1)
 
-        mincome2 = Income(name='investment', amount=123, user_id=user.id)
-        db.session.add(mincome2)
+        income2 = Income(name='investment', amount=123, user_id=user.id,
+                period='weekly')
+        db.session.add(income2)
         db.session.commit()
-        self.assertTrue(mincome2 in user.incomes)
+        self.assertTrue(income2 in user.incomes)
         self.assertEquals(2, len(user.incomes)) # lazy 'select' returns list
         self.assertEquals(user.incomes[0].user, user) # 'backref'
+
+    def test_income_total_property(self):
+        income = Income(name='salary', amount=100.05, user_id=100,
+                period='weekly')
+        self.assertEqual(400.2, income.total)
+        income.period = 'monthly'
+        self.assertEqual(100.05, income.total)
+        income.period = "yearly"
+        income.amount = 560
+        self.assertEqual(10, income.total)

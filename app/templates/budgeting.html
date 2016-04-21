@@ -7,7 +7,7 @@
 <p>Incomes - Expenditure, Graphs</p>
 
 <h3>Income</h3>
-<h4>Current Incomes</h4>
+<h4>Current Monthly Incomes</h4>
 <table class="table table-hover">
     <tr>
         <th>Income name</th>
@@ -19,7 +19,7 @@
 <tr>
     <td>{{income.name}}</td>
     <td>{{income.date_created}}</td>
-    <td>{{income.amount}}</td>
+    <td>{{income.total}}</td>
     <td>
         <form action="{{url_for('delete_income', income_id=income.id)}}" method="POST">
             <input class="btn btn-danger" type="submit" value="Delete">
@@ -48,9 +48,6 @@
             {{form.name}}
         </td>
         <td>
-        {% for error in form.period.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
             {{form.period}}
         </td>
         <td>

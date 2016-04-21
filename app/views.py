@@ -74,9 +74,8 @@ def forgot():
 def budgeting():
     form = IncomeForm()
     if form.validate_on_submit():
-        # TODO: Handle income period
         income = Income(name=form.name.data, amount=form.amount.data,
-                user_id=current_user.id)
+                user_id=current_user.id, period=form.period.data)
         try:
             db.session.add(income)
             db.session.commit()
