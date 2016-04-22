@@ -28,7 +28,7 @@ class TestUser(unittest.TestCase):
 
         # Create a new income
         income = Income(name='salary', amount=4321.09, user_id=user.id,
-                period='weekly')
+                interval='weekly')
         db.session.add(income)
         db.session.commit()
         self.assertTrue(income in user.incomes)
@@ -39,7 +39,7 @@ class TestUser(unittest.TestCase):
         self.assertEquals(income.user_id, 1)
 
         income2 = Income(name='investment', amount=123, user_id=user.id,
-                period='weekly')
+                interval='weekly')
         db.session.add(income2)
         db.session.commit()
         self.assertTrue(income2 in user.incomes)
@@ -48,10 +48,10 @@ class TestUser(unittest.TestCase):
 
     def test_income_total_property(self):
         income = Income(name='salary', amount=100.05, user_id=100,
-                period='weekly')
+                interval='weekly')
         self.assertEqual(400.2, income.total)
-        income.period = 'monthly'
+        income.interval = 'monthly'
         self.assertEqual(100.05, income.total)
-        income.period = "yearly"
+        income.interval = "yearly"
         income.amount = 560
         self.assertEqual(10, income.total)

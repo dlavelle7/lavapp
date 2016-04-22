@@ -75,7 +75,7 @@ def budgeting():
     form = IncomeForm()
     if form.validate_on_submit():
         income = Income(name=form.name.data, amount=form.amount.data,
-                user_id=current_user.id, period=form.period.data)
+                user_id=current_user.id, interval=form.interval.data)
         try:
             db.session.add(income)
             db.session.commit()

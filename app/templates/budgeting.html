@@ -10,9 +10,9 @@
 <h4>Current Monthly Incomes</h4>
 <table class="table table-hover">
     <tr>
-        <th>Income name</th>
+        <th>Name</th>
         <th>Date created</th>
-        <th>Income amount</th>
+        <th>Amount</th>
         <th></th>
     </tr>
 {% for income in current_user.incomes %}
@@ -36,9 +36,9 @@
 <h4>Add New Income</h4>
 <table class="table table-bordered">
     <tr>
-        <th>Income name</th>
-        <th>Income period</th>
-        <th>Income amount</th>
+        <th>Name</th>
+        <th>Interval</th>
+        <th>Amount</th>
         <th></th>
     </tr>
     <tr>
@@ -51,7 +51,7 @@
             {{form.name}}
         </td>
         <td>
-            {{form.period}}
+            {{form.interval}}
         </td>
         <td>
         {% for error in form.amount.errors %}

@@ -22,10 +22,11 @@ class ForgotForm(Form):
 
 
 class IncomeForm(Form):
-    periodic_choices = [('weekly', 'Weekly'), ('monthly', 'Monthly'),
+    interval_choices = [('weekly', 'Weekly'), ('monthly', 'Monthly'),
             ('yearly', 'Yearly')]
 
     name = StringField('name', validators=[DataRequired()])
-    period = SelectField('period', choices=periodic_choices)
+    interval = SelectField('interval', choices=interval_choices)
+    # TODO: Fix currency
     amount = DecimalField('amount', places='2', rounding=None,
             validators=[DataRequired()])

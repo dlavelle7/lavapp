@@ -53,21 +53,22 @@ class Income(db.Model):
     name = db.Column(db.String(64))
     amount = db.Column(db.Float)
     date_created = db.Column(db.DateTime)
-    period = db.Column(db.String(64))
+    interval = db.Column(db.String(64))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, name, amount, user_id, period):
+    def __init__(self, name, amount, user_id, interval):
         self.name = name
         self.amount = amount
         self.user_id = user_id
+        # TODO: Format date
         self.date_created = datetime.datetime.now()
-        self.period = period
+        self.interval = interval
 
     @property
     def total(self):
-        if self.period == "weekly":
+        if self.interval == "weekly":
             return self.amount * 4
-        elif self.period == "yearly":
+        elif self.interval == "yearly":
             return self.amount / 56
         else:
             return self.amount
