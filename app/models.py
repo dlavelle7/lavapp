@@ -72,3 +72,7 @@ class Income(db.Model):
             return self.amount / 56
         else:
             return self.amount
+
+    @property
+    def rounded_total(self):
+        return  format(self.total, '.2f')

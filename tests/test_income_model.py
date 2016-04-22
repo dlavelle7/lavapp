@@ -47,6 +47,7 @@ class TestUser(unittest.TestCase):
         self.assertEquals(user.incomes[0].user, user) # 'backref'
 
     def test_income_total_property(self):
+        # TODO: Should this be the same format as form Decimal('100.05')
         income = Income(name='salary', amount=100.05, user_id=100,
                 interval='weekly')
         self.assertEqual(400.2, income.total)
@@ -55,3 +56,17 @@ class TestUser(unittest.TestCase):
         income.interval = "yearly"
         income.amount = 560
         self.assertEqual(10, income.total)
+
+    def test_rounded_total_property(self):
+        # TODO: Should this be the same format as form Decimal('2.222')
+        income = Income(name='salary', amount=2.222, user_id=100,
+                interval='weekly')
+        self.assertEqual('8.89', income.rounded_total)
+        income = Income(name='salary', amount=123.455, user_id=100,
+                interval='monthly')
+        self.assertEqual('123.45', income.rounded_total)
+        income.amount = 1.200
+        self.assertEqual('1.20', income.rounded_total)
+        income = Income(name='salary', amount=5056.56, user_id=100,
+                interval='yearly')
+        self.assertEqual('90.30', income.rounded_total)
