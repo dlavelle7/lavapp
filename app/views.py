@@ -103,3 +103,8 @@ def delete_income(income_id):
             print e
             db.session.rollback()
     return redirect(url_for('income'))
+
+@login_required
+@app.route('/expense', methods=['GET', 'POST'])
+def expense():
+    return render_template('expense.html', title="Expense")

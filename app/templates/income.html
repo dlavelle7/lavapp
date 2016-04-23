@@ -5,7 +5,7 @@
 <h4>Current Monthly Incomes</h4>
 <table class="table table-hover">
     <tr>
-        <th>Income name</th>
+        <th>Name</th>
         <th>Date created</th>
         <th>Amount</th>
         <th></th>
@@ -14,7 +14,7 @@
 <tr>
     <td>{{income.name}}</td>
     <td>{{income.date_created}}</td>
-    <td>{{income.rounded_total}}</td>
+    <td>€{{income.rounded_total}}</td>
     <td>
         <form action="{{url_for('delete_income', income_id=income.id)}}" method="POST">
             <button class="btn btn-danger" type="submit">
@@ -24,6 +24,11 @@
     </td>
 </tr>
 {% endfor %}
+<tr>
+    <td></td>
+    <td><b>Total Monthly Income:</b></td>
+    <td><b>€{{current_user.total_income}}</b></td>
+</tr>
 </table>
 
 <hr>
@@ -31,9 +36,9 @@
 <h4>Add New Income</h4>
 <table class="table table-bordered">
     <tr>
-        <th>Name</th>
+        <th>Income name</th>
         <th>Interval</th>
-        <th>Amount</th>
+        <th>Amount (€)</th>
         <th></th>
     </tr>
     <tr>

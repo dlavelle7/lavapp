@@ -3,6 +3,10 @@ from passlib.hash import pbkdf2_sha256
 import datetime
 
 
+def round_for_currency(value):
+    return  format(value, '.2f')
+
+
 class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
@@ -45,6 +49,10 @@ class User(db.Model):
     def get(user_id):
         return User.query.get(user_id)
 
+    @property
+    def total_income(self):
+        return round_for_currency(sum(income.total for income in self.incomes))
+
 
 # TODO: Split model modules
 class Income(db.Model):
@@ -75,4 +83,4 @@ class Income(db.Model):
 
     @property
     def rounded_total(self):
-        return  format(self.total, '.2f')
+        return  round_for_currency(self.total)

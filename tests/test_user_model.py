@@ -1,7 +1,7 @@
 import os
 import unittest
 from app import app, db
-from app.models import User
+from app.models import User, Income
 from config import basedir
 from sqlalchemy.exc import IntegrityError
 
@@ -51,3 +51,20 @@ class TestUser(unittest.TestCase):
         all_johns = User.query.filter(User.username == user.username).all()
         self.assertTrue(len(all_johns), 1)
         self.assertEqual(user, all_johns[0])
+
+    def test_total_income(self):
+        user = User(username='john', password='pass', email='john@foo.com')
+        db.session.add(user)
+        db.session.commit()
+        income = Income(name='salary', amount=100, user_id=user.id,
+                interval='weekly')
+        db.session.add(income)
+        income2 = Income(name='investment', amount=555, user_id=user.id,
+                interval='monthly')
+        db.session.add(income2)
+        db.session.commit()
+        self.assertEqual('955.00', user.total_income)
+
+        db.session.delete(income2)
+        db.session.commit()
+        self.assertEqual('400.00', user.total_income)
