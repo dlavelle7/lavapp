@@ -4,7 +4,10 @@ import datetime
 
 
 def round_for_currency(value):
-    return  format(value, '.2f')
+    return "{:,.2f}".format(value)
+
+def format_date(date_object):
+    return date_object.strftime("%d-%m-%Y")
 
 
 class User(db.Model):
@@ -84,3 +87,7 @@ class Income(db.Model):
     @property
     def rounded_total(self):
         return  round_for_currency(self.total)
+
+    @property
+    def formatted_date_created(self):
+        return format_date(self.date_created)

@@ -1,7 +1,7 @@
 import os
 import unittest
 from app import app, db
-from app.models import User, Income
+from app.models import User, Income, round_for_currency
 from config import basedir
 
 
@@ -53,8 +53,8 @@ class TestUser(unittest.TestCase):
         self.assertEqual(400.2, income.total)
         income.interval = 'monthly'
         self.assertEqual(100.05, income.total)
-        income.interval = "yearly"
         income.amount = 560
+        income.interval = "yearly"
         self.assertEqual(10, income.total)
 
     def test_rounded_total_property(self):
@@ -70,3 +70,6 @@ class TestUser(unittest.TestCase):
         income = Income(name='salary', amount=5056.56, user_id=100,
                 interval='yearly')
         self.assertEqual('90.30', income.rounded_total)
+
+    def test_round_for_currency(self):
+        self.assertEqual('5,000,000.00', round_for_currency(5000000))
