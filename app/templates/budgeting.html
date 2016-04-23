@@ -1,74 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- TODO: Break into sub templates -->
-<h2>Personal Budgeting</h2>
+<h2>Budgeting</h2>
 <h3>Summary</h3>
 <p>Incomes - Expenditure, Graphs</p>
-
-<h3>Income</h3>
-<h4>Current Monthly Incomes</h4>
-<table class="table table-hover">
-    <tr>
-        <th>Name</th>
-        <th>Date created</th>
-        <th>Amount</th>
-        <th></th>
-    </tr>
-{% for income in current_user.incomes %}
-<tr>
-    <td>{{income.name}}</td>
-    <td>{{income.date_created}}</td>
-    <td>{{income.rounded_total}}</td>
-    <td>
-        <form action="{{url_for('delete_income', income_id=income.id)}}" method="POST">
-            <button class="btn btn-danger" type="submit">
-                <i class="icon-remove icon-white"></i>
-            </button>
-        </form>
-    </td>
-</tr>
-{% endfor %}
-</table>
-
-<hr>
-<!-- TODO: Split into separate 'income' view' -->
-<h4>Add New Income</h4>
-<table class="table table-bordered">
-    <tr>
-        <th>Name</th>
-        <th>Interval</th>
-        <th>Amount</th>
-        <th></th>
-    </tr>
-    <tr>
-    <form action="" method="post" name="income">
-        {{form.hidden_tag()}} <!-- Implements CSRF prevention -->
-        <td>
-        {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-            {{form.name}}
-        </td>
-        <td>
-            {{form.interval}}
-        </td>
-        <td>
-        {% for error in form.amount.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-            {{form.amount}}
-        </td>
-        <td>
-            <button class="btn btn-primary" type="submit">
-                <i class="icon-plus icon-white"></i>
-            </button>
-        </td>
-    </form>
-    </tr>
-</table>
-
-<!-- TODO: Split into separate 'expense' view' -->
-<h3>Expenditure</h3>
 
 {% endblock %}

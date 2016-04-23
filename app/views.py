@@ -72,6 +72,11 @@ def forgot():
 @login_required
 @app.route('/budgeting', methods=['GET', 'POST'])
 def budgeting():
+    return render_template('budgeting.html', title="Budgeting")
+
+@login_required
+@app.route('/income', methods=['GET', 'POST'])
+def income():
     form = IncomeForm()
     if form.validate_on_submit():
         income = Income(name=form.name.data, amount=form.amount.data,
@@ -82,10 +87,9 @@ def budgeting():
         except Exception as e:
             print e
             db.session.rollback()
-            return redirect(url_for('budgeting'))
 
-        return redirect(url_for('budgeting'))
-    return render_template('budgeting.html', title="Budgeting", form=form)
+        return redirect(url_for('income'))
+    return render_template('income.html', title="Income", form=form)
 
 @app.route('/delete/income/<int:income_id>', methods=['POST'])
 def delete_income(income_id):
@@ -98,4 +102,4 @@ def delete_income(income_id):
         except Exception as e:
             print e
             db.session.rollback()
-    return redirect(url_for('budgeting'))
+    return redirect(url_for('income'))
