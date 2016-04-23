@@ -57,7 +57,7 @@ class User(db.Model):
         return round_for_currency(sum(income.total for income in self.incomes))
 
 
-# TODO: Split model modules
+# TODO: Split models module (one class per module)
 class Income(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
@@ -71,7 +71,6 @@ class Income(db.Model):
         self.name = name
         self.amount = amount
         self.user_id = user_id
-        # TODO: Format date
         self.date_created = datetime.datetime.now()
         self.interval = interval
 

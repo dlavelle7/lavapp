@@ -1,6 +1,7 @@
 from app import app
 from flask import render_template, flash, redirect, g, url_for, session
-from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm
+from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm, \
+        ExpenseForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
 from app.models import User, Income
 from app import db
@@ -107,4 +108,5 @@ def delete_income(income_id):
 @login_required
 @app.route('/expense', methods=['GET', 'POST'])
 def expense():
-    return render_template('expense.html', title="Expense")
+    form = ExpenseForm()
+    return render_template('expense.html', title="Expense", form=form)

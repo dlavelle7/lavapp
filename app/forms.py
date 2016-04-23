@@ -1,7 +1,8 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, BooleanField, PasswordField, TextField, \
-        SelectField, DecimalField, FloatField
-from wtforms.validators import DataRequired, EqualTo, Email
+        SelectField, DecimalField, IntegerField
+from wtforms.validators import DataRequired, EqualTo, Email, NumberRange
+from flask.ext.wtf.html5 import NumberInput
 
 
 class LoginForm(Form):
@@ -21,12 +22,19 @@ class ForgotForm(Form):
     forgot = StringField('forgot', validators=[DataRequired(), Email()])
 
 
-class IncomeForm(Form):
+class BaseBudgetForm(Form):
     interval_choices = [('weekly', 'Weekly'), ('monthly', 'Monthly'),
             ('yearly', 'Yearly')]
 
     name = StringField('name', validators=[DataRequired()])
     interval = SelectField('interval', choices=interval_choices)
-    # TODO: Fix currency
     amount = DecimalField('amount', places=2, rounding=None,
             validators=[DataRequired()])
+
+
+class IncomeForm(BaseBudgetForm):
+    pass
+
+
+class ExpenseForm(BaseBudgetForm):
+    shared_by = IntegerField('shared_by', widget=NumberInput(min=1), default=1)
