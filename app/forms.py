@@ -29,7 +29,7 @@ class BaseBudgetForm(Form):
     name = StringField('name', validators=[DataRequired()])
     interval = SelectField('interval', choices=interval_choices)
     amount = DecimalField('amount', places=2, rounding=None,
-            validators=[DataRequired()])
+            validators=[NumberRange(min=0.01)])
 
 
 class IncomeForm(BaseBudgetForm):
