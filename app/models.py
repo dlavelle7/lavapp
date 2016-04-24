@@ -88,17 +88,15 @@ class Sum(db.Model):
 
     @property
     def total(self):
-        # TODO: switch / case dict?
-        if self.interval == "weekly":
-            return self.amount * 4
-        elif self.interval == "yearly":
-            return self.amount / 56
-        elif self.interval == "bimonthly":
-            return self.amount / 2
-        elif self.interval == "quarterly":
-            return self.amount / 4
-        else:
-            return self.amount
+        options = {
+            "weekly": lambda amount: amount * 4,
+            "fortnightly": lambda amount: amount * 2,
+            "monthly": lambda amount: amount,
+            "bimonthly": lambda amount: amount / 2,
+            "quarterly": lambda amount: amount / 3,
+            "yearly": lambda amount: amount / 12,
+        }
+        return options.get(self.interval)(self.amount)
 
     @property
     def rounded_total(self):

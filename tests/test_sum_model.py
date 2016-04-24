@@ -38,7 +38,7 @@ class TestSum(unittest.TestCase):
         self.assertEquals(income.amount, 4321.09)
         self.assertEquals(income.user_id, 1)
 
-        income2 = Income(name='investment', amount=123, user_id=user.id,
+        income2 = Income(name='investment', amount=123.0, user_id=user.id,
                 interval='weekly')
         db.session.add(income2)
         db.session.commit()
@@ -47,23 +47,24 @@ class TestSum(unittest.TestCase):
         self.assertEquals(user.incomes[0].user, user) # 'backref'
 
     def test_total_property(self):
-        # TODO: Should this be the same format as form Decimal('100.05')
         income = Income(name='salary', amount=100.05, user_id=100,
                 interval='weekly')
         self.assertEqual(400.2, income.total)
         income.interval = 'monthly'
         self.assertEqual(100.05, income.total)
-        income.amount = 560
+        income.amount = 120.0
         income.interval = "yearly"
         self.assertEqual(10, income.total)
         income.amount = 350.00
         income.interval = "bimonthly"
         self.assertEqual(175.00, income.total)
+        income.amount = 300.00
         income.interval = "quarterly"
-        self.assertEqual(87.5, income.total)
+        self.assertEqual(100.0, income.total)
+        income.interval = "fortnightly"
+        self.assertEqual(600.0, income.total)
 
     def test_rounded_total_property(self):
-        # TODO: Should this be the same format as form Decimal('2.222')
         income = Income(name='salary', amount=2.222, user_id=100,
                 interval='weekly')
         self.assertEqual('8.89', income.rounded_total)
@@ -72,9 +73,9 @@ class TestSum(unittest.TestCase):
         self.assertEqual('123.45', income.rounded_total)
         income.amount = 1.200
         self.assertEqual('1.20', income.rounded_total)
-        income = Income(name='salary', amount=5056.56, user_id=100,
+        income = Income(name='salary', amount=120.12, user_id=100,
                 interval='yearly')
-        self.assertEqual('90.30', income.rounded_total)
+        self.assertEqual('10.01', income.rounded_total)
 
     def test_round_for_currency(self):
         self.assertEqual('5,000,000.00', round_for_currency(5000000))
@@ -84,10 +85,10 @@ class TestSum(unittest.TestCase):
         db.session.add(user)
         db.session.commit()
 
-        expense = Expense(name='rent', amount=1250, user_id=user.id,
+        expense = Expense(name='rent', amount=1250.0, user_id=user.id,
                 interval='monthly', shared_by=2)
         self.assertEqual(expense.total, 625)
-        expense2 = Expense(name='UPC', amount=60, user_id=user.id,
+        expense2 = Expense(name='UPC', amount=60.0, user_id=user.id,
                 interval='monthly', shared_by=2)
         self.assertEqual(expense2.total, 30)
         db.session.add(expense)
@@ -100,3 +101,7 @@ class TestSum(unittest.TestCase):
         self.assertEqual(expense.user, user)
 
         self.assertEqual(user.total_expense, '655.00')
+
+        expense3 = Expense(name='Water', amount=60.0, user_id=user.id,
+                interval='quarterly', shared_by=2)
+        self.assertEqual(expense3.total, 10.0)
