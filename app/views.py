@@ -101,6 +101,7 @@ def income():
         income = Income(name=form.name.data, amount=form.amount.data,
                 user_id=current_user.id, interval=form.interval.data)
         add_commit_model(income)
+        return redirect(url_for('income'))
     return render_template('income.html', title="Income", form=form)
 
 @app.route('/delete/income/<int:model_id>', methods=['POST'])
@@ -121,6 +122,7 @@ def expense():
                 user_id=current_user.id, interval=form.interval.data,
                 shared_by=form.shared_by.data)
         add_commit_model(expense)
+        return redirect(url_for('expense'))
     return render_template('expense.html', title="Expense", form=form)
 
 @app.route('/delete/expense/<int:model_id>', methods=['POST'])
