@@ -23,6 +23,7 @@ class ForgotForm(Form):
 
 
 class BaseBudgetForm(Form):
+    # TODO: Bi monthly
     interval_choices = [('weekly', 'Weekly'), ('monthly', 'Monthly'),
             ('yearly', 'Yearly')]
 

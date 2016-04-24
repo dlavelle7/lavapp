@@ -17,6 +17,7 @@ class User(db.Model):
     password = db.Column(db.String(64))
     email = db.Column(db.String(64))
     incomes = db.relationship("Income", backref='user')
+    expenses = db.relationship("Expense", backref='user')
 
     def __init__(self, username, password, email):
         self.username = username
@@ -56,6 +57,10 @@ class User(db.Model):
     def total_income(self):
         return round_for_currency(sum(income.total for income in self.incomes))
 
+    @property
+    def total_expense(self):
+        return round_for_currency(sum(expense.total for expense in self.expenses))
+
 
 # TODO: Split models module (one class per module)
 class Sum(db.Model):
@@ -83,6 +88,7 @@ class Sum(db.Model):
 
     @property
     def total(self):
+        # TODO: Bi monthly
         if self.interval == "weekly":
             return self.amount * 4
         elif self.interval == "yearly":
@@ -109,6 +115,7 @@ class Income(Sum):
 
 
 class Expense(Sum):
+    # TODO: Shared_by __init__ / super()
     __tablename__ = "expense"
     id = db.Column(db.Integer, db.ForeignKey('sum.id'), primary_key=True)
     __mapper_args__ = {

@@ -3,14 +3,32 @@ from flask import render_template, flash, redirect, g, url_for, session
 from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm, \
         ExpenseForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
-from app.models import User, Income
+from app.models import User, Income, Expense
 from app import db
 from sqlalchemy.exc import IntegrityError
 from app.emails import send_registration_email
 
+
 #@app.before_request
 #def before_request():
 #    pass
+
+# TODO: Handle db transactions better
+def add_commit_model(model):
+    try:
+        db.session.add(model)
+        db.session.commit()
+    except Exception as e:
+        print e
+        db.session.rollback()
+
+def delete_commit_model(model):
+    try:
+        db.session.delete(model)
+        db.session.commit()
+    except Exception as e:
+        print e
+        db.session.rollback()
 
 @app.login_manager.user_loader
 def load_user(user_id):
@@ -82,14 +100,7 @@ def income():
     if form.validate_on_submit():
         income = Income(name=form.name.data, amount=form.amount.data,
                 user_id=current_user.id, interval=form.interval.data)
-        try:
-            db.session.add(income)
-            db.session.commit()
-        except Exception as e:
-            print e
-            db.session.rollback()
-
-        return redirect(url_for('income'))
+        add_commit_model(income)
     return render_template('income.html', title="Income", form=form)
 
 @app.route('/delete/income/<int:model_id>', methods=['POST'])
@@ -97,16 +108,24 @@ def delete_income(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
     income = Income.query.get(model_id)
     if income:
-        try:
-            db.session.delete(income)
-            db.session.commit()
-        except Exception as e:
-            print e
-            db.session.rollback()
+        delete_commit_model(income)
     return redirect(url_for('income'))
 
 @login_required
 @app.route('/expense', methods=['GET', 'POST'])
 def expense():
     form = ExpenseForm()
+    if form.validate_on_submit():
+        # TODO: Shared_by attr
+        expense = Expense(name=form.name.data, amount=form.amount.data,
+                user_id=current_user.id, interval=form.interval.data)
+        add_commit_model(expense)
     return render_template('expense.html', title="Expense", form=form)
+
+@app.route('/delete/expense/<int:model_id>', methods=['POST'])
+def delete_expense(model_id):
+    # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
+    expense = Expense.query.get(model_id)
+    if expense:
+        delete_commit_model(expense)
+    return redirect(url_for('expense'))
