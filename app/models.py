@@ -88,11 +88,15 @@ class Sum(db.Model):
 
     @property
     def total(self):
-        # TODO: Bi monthly
+        # TODO: switch / case dict?
         if self.interval == "weekly":
             return self.amount * 4
         elif self.interval == "yearly":
             return self.amount / 56
+        elif self.interval == "bimonthly":
+            return self.amount / 2
+        elif self.interval == "quarterly":
+            return self.amount / 4
         else:
             return self.amount
 
@@ -115,9 +119,17 @@ class Income(Sum):
 
 
 class Expense(Sum):
-    # TODO: Shared_by __init__ / super()
     __tablename__ = "expense"
     id = db.Column(db.Integer, db.ForeignKey('sum.id'), primary_key=True)
+    shared_by = db.Column(db.Integer)
     __mapper_args__ = {
         'polymorphic_identity':'expense',
     }
+
+    def __init__(self, name, amount, user_id, interval, shared_by):
+        super(Expense, self).__init__(name, amount, user_id, interval)
+        self.shared_by = shared_by
+
+    @property
+    def total(self):
+        return super(Expense, self).total / self.shared_by

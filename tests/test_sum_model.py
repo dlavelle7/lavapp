@@ -1,11 +1,11 @@
 import os
 import unittest
 from app import app, db
-from app.models import User, Income, round_for_currency
+from app.models import User, Income, Expense, round_for_currency
 from config import basedir
 
 
-class TestUser(unittest.TestCase):
+class TestSum(unittest.TestCase):
 
     # TODO: This is duplicated
     def setUp(self):
@@ -46,7 +46,7 @@ class TestUser(unittest.TestCase):
         self.assertEquals(2, len(user.incomes)) # lazy 'select' returns list
         self.assertEquals(user.incomes[0].user, user) # 'backref'
 
-    def test_income_total_property(self):
+    def test_total_property(self):
         # TODO: Should this be the same format as form Decimal('100.05')
         income = Income(name='salary', amount=100.05, user_id=100,
                 interval='weekly')
@@ -56,6 +56,11 @@ class TestUser(unittest.TestCase):
         income.amount = 560
         income.interval = "yearly"
         self.assertEqual(10, income.total)
+        income.amount = 350.00
+        income.interval = "bimonthly"
+        self.assertEqual(175.00, income.total)
+        income.interval = "quarterly"
+        self.assertEqual(87.5, income.total)
 
     def test_rounded_total_property(self):
         # TODO: Should this be the same format as form Decimal('2.222')
@@ -73,3 +78,25 @@ class TestUser(unittest.TestCase):
 
     def test_round_for_currency(self):
         self.assertEqual('5,000,000.00', round_for_currency(5000000))
+
+    def test_expense(self):
+        user = User(username='john', password='pass', email='john@foo.com')
+        db.session.add(user)
+        db.session.commit()
+
+        expense = Expense(name='rent', amount=1250, user_id=user.id,
+                interval='monthly', shared_by=2)
+        self.assertEqual(expense.total, 625)
+        expense2 = Expense(name='UPC', amount=60, user_id=user.id,
+                interval='monthly', shared_by=2)
+        self.assertEqual(expense2.total, 30)
+        db.session.add(expense)
+        db.session.add(expense2)
+        db.session.commit()
+
+        self.assertEqual(2, len(user.expenses))
+        self.assertTrue(expense in user.expenses)
+        self.assertTrue(expense in user.expenses)
+        self.assertEqual(expense.user, user)
+
+        self.assertEqual(user.total_expense, '655.00')

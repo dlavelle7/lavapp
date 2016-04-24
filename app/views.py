@@ -118,7 +118,8 @@ def expense():
     if form.validate_on_submit():
         # TODO: Shared_by attr
         expense = Expense(name=form.name.data, amount=form.amount.data,
-                user_id=current_user.id, interval=form.interval.data)
+                user_id=current_user.id, interval=form.interval.data,
+                shared_by=form.shared_by.data)
         add_commit_model(expense)
     return render_template('expense.html', title="Expense", form=form)
 

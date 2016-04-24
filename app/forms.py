@@ -23,8 +23,8 @@ class ForgotForm(Form):
 
 
 class BaseBudgetForm(Form):
-    # TODO: Bi monthly
     interval_choices = [('weekly', 'Weekly'), ('monthly', 'Monthly'),
+            ('bimonthly', 'Bimonthly'),('quarterly', 'Quarterly'),
             ('yearly', 'Yearly')]
 
     name = StringField('name', validators=[DataRequired()])
