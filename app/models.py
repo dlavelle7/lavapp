@@ -58,14 +58,21 @@ class User(db.Model):
 
 
 # TODO: Split models module (one class per module)
-class Income(db.Model):
+class Sum(db.Model):
 
+    __tablename__ = "sum"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     amount = db.Column(db.Float)
     date_created = db.Column(db.DateTime)
     interval = db.Column(db.String(64))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    type = db.Column(db.String(50))
+    __mapper_args__ = {
+        'polymorphic_identity':'sum',
+        'polymorphic_on':type
+    }
 
     def __init__(self, name, amount, user_id, interval):
         self.name = name
@@ -90,3 +97,20 @@ class Income(db.Model):
     @property
     def formatted_date_created(self):
         return format_date(self.date_created)
+
+
+# Joined Table Inheritance
+class Income(Sum):
+    __tablename__ = "income"
+    id = db.Column(db.Integer, db.ForeignKey('sum.id'), primary_key=True)
+    __mapper_args__ = {
+        'polymorphic_identity':'income',
+    }
+
+
+class Expense(Sum):
+    __tablename__ = "expense"
+    id = db.Column(db.Integer, db.ForeignKey('sum.id'), primary_key=True)
+    __mapper_args__ = {
+        'polymorphic_identity':'expense',
+    }
