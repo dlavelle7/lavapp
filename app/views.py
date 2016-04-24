@@ -92,10 +92,10 @@ def income():
         return redirect(url_for('income'))
     return render_template('income.html', title="Income", form=form)
 
-@app.route('/delete/income/<int:income_id>', methods=['POST'])
-def delete_income(income_id):
+@app.route('/delete/income/<int:model_id>', methods=['POST'])
+def delete_income(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
-    income = Income.query.get(income_id)
+    income = Income.query.get(model_id)
     if income:
         try:
             db.session.delete(income)

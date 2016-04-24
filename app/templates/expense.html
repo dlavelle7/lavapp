@@ -4,36 +4,9 @@
 <h3>Expenditure</h3>
 <h4>Current Monthly Expenses</h4>
 
-<!-- TODO: Duplicate of income table -->
-<table class="table table-hover">
-    <tr>
-        <th>Name</th>
-        <th>Date created</th>
-        <th>Amount</th>
-        <th></th>
-    </tr>
-{% for expense in current_user.expenses %}
-<tr>
-    <td>{{expense.name}}</td>
-    <td>{{expense.formatted_date_created}}</td>
-    <td>€{{expense.rounded_total}}</td>
-    <td>
-        <form action="{{url_for('delete_expense', expense_id=expense.id)}}" method="POST">
-            <button class="btn btn-danger" type="submit">
-                <i class="icon-remove icon-white"></i>
-            </button>
-        </form>
-    </td>
-</tr>
-{% endfor %}
-<tr>
-    <td></td>
-    <td><b>Total Monthly Expense:</b></td>
-    <td><b>€{{current_user.total_expense}}</b></td>
-</tr>
-</table>
-
-<hr>
+{% with models=current_user.expenses, total=current_user.total_expense, delete='delete_expense' %}
+    {% include "budget_table.html" %}
+{% endwith %}
 
 <h4>Add New Expense</h4>
 <table class="table table-bordered">
