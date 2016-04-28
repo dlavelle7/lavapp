@@ -27,6 +27,7 @@ class TestSum(unittest.TestCase):
         db.session.commit()
 
         # Create a new income
+        self.assertEqual('0.00', user.total_income)
         income = Income(name='salary', amount=4321.09, user_id=user.id,
                 interval='weekly')
         db.session.add(income)
@@ -85,6 +86,7 @@ class TestSum(unittest.TestCase):
         db.session.add(user)
         db.session.commit()
 
+        self.assertEqual('0.00', user.total_expense)
         expense = Expense(name='rent', amount=1250.0, user_id=user.id,
                 interval='monthly', shared_by=2)
         self.assertEqual(expense.total, 625)

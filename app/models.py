@@ -53,13 +53,26 @@ class User(db.Model):
     def get(user_id):
         return User.query.get(user_id)
 
+    def _total_income(self):
+        return sum(income.total for income in self.incomes)
+
     @property
     def total_income(self):
-        return round_for_currency(sum(income.total for income in self.incomes))
+        return round_for_currency(self._total_income())
+
+    def _total_expense(self):
+        return sum(expense.total for expense in self.expenses)
 
     @property
     def total_expense(self):
-        return round_for_currency(sum(expense.total for expense in self.expenses))
+        return round_for_currency(self._total_expense())
+
+    @property
+    def balance(self):
+        return round_for_currency(self._balance())
+
+    def _balance(self):
+        return self._total_income() - self._total_expense()
 
 
 # TODO: Split models module (one class per module)

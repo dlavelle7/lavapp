@@ -1,7 +1,7 @@
 import os
 import unittest
 from app import app, db
-from app.models import User, Income
+from app.models import User, Income, Expense
 from config import basedir
 from sqlalchemy.exc import IntegrityError
 
@@ -68,3 +68,35 @@ class TestUser(unittest.TestCase):
         db.session.delete(income2)
         db.session.commit()
         self.assertEqual('400.00', user.total_income)
+
+    def test_balance(self):
+        user = User(username='john', password='pass', email='john@foo.com')
+        db.session.add(user)
+        db.session.commit()
+
+        income = Income(name='salary', amount=100, user_id=user.id,
+                interval='weekly')
+        db.session.add(income)
+        income2 = Income(name='investment', amount=555, user_id=user.id,
+                interval='monthly')
+        db.session.add(income2)
+        db.session.commit()
+        self.assertEqual('955.00', user.total_income)
+        self.assertEqual('955.00', user.balance)
+
+        expense = Expense(name='rent', amount=1250.0, user_id=user.id,
+                interval='monthly', shared_by=2)
+        self.assertEqual(expense.total, 625)
+        db.session.add(expense)
+        db.session.commit()
+
+
+        self.assertEqual('330.00', user.balance)
+
+        expense2 = Expense(name='UPC', amount=60.0, user_id=user.id,
+                interval='monthly', shared_by=2)
+        self.assertEqual(expense2.total, 30)
+        db.session.add(expense2)
+        db.session.commit()
+
+        self.assertEqual('300.00', user.balance)
