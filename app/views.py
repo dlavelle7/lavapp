@@ -117,7 +117,6 @@ def delete_income(model_id):
 def expense():
     form = ExpenseForm()
     if form.validate_on_submit():
-        # TODO: Shared_by attr
         expense = Expense(name=form.name.data, amount=form.amount.data,
                 user_id=current_user.id, interval=form.interval.data,
                 shared_by=form.shared_by.data)
