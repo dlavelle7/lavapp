@@ -5,6 +5,7 @@
 <form action="" method="post" name="login">
     {{form.hidden_tag()}} <!-- Implements CSRF prevention -->
     <p>Username
+    <!-- TODO: Form errors are a bit ugly -->
     {% for error in form.username.errors %}
         <span style="color: red;">[{{ error }}]</span>
     {% endfor %}<br>

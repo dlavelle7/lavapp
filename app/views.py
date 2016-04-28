@@ -58,21 +58,26 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, password=form.password.data,
-                email=form.email.data)
-        db.session.add(user)
+        exists = User.query.filter(User.username == form.username.data).first()
+        if exists:
+            flash("Username already taken", "error")
+        else:
+            user = User(username=form.username.data,
+                    password=form.password.data, email=form.email.data)
+            db.session.add(user)
 
-        try:
-            db.session.commit()
-        except IntegrityError as e:
-            print e
-            db.session.rollback()
-            return render_template('register.html', title="Sign Up", form=form)
+            try:
+                db.session.commit()
+            except Exception as e:
+                print e
+                db.session.rollback()
+                return render_template('register.html', title="Sign Up",
+                        form=form)
 
-        send_registration_email(user)
-        login_user(user)
+            send_registration_email(user)
+            login_user(user)
 
-        return redirect(url_for('index'))
+            return redirect(url_for('index'))
     return render_template('register.html', title="Sign Up", form=form)
 
 @app.route('/logout')
