@@ -2,10 +2,63 @@
 {% block content %}
 
 <h3>Summary</h3>
-<!-- TODO: JavaScript Graphs -->
-<p>Summary graphs here,/p>
-
 <h4>Balance</h4>
-<b>€{{current_user.balance}}</p>
+<p>€{{current_user.balance}}</p>
+
+<hr>
+<h4>Monthly Expense Summary</h4>
+<div id="container" style="width:100%; height:400px;"></div>
+
+<h4>Monthly Income Summary</h4>
+<hr>
+
+<script>
+$.ajax({
+    url: '/user/expenses',
+    dataType: 'json',
+    success: function(data) {
+        // Pie Chart
+        $(function () {
+            $('#container').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Summary of Expenses'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                            style: {
+                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Expenses',
+                    colorByPoint: true,
+                    data: data
+
+                }]
+            });
+        });
+
+    }
+});
+
+
+
+</script>
 
 {% endblock %}

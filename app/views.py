@@ -1,3 +1,4 @@
+import json
 from app import app
 from flask import render_template, flash, redirect, g, url_for, session
 from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm, \
@@ -136,3 +137,21 @@ def delete_expense(model_id):
     if expense:
         delete_commit_model(expense)
     return redirect(url_for('expense'))
+
+@login_required
+@app.route('/user/incomes', methods=['GET'])
+def user_incomes():
+    incomes = []
+    for income in current_user.incomes:
+        incomes.append({"name": incomes.name, "y": incomes.total})
+
+    return json.dumps(incomes)
+
+@login_required
+@app.route('/user/expenses', methods=['GET'])
+def user_expenses():
+    expenses = []
+    for expense in current_user.expenses:
+        expenses.append({"name": expense.name, "y": expense.total})
+
+    return json.dumps(expenses)
