@@ -157,12 +157,8 @@ def user_expenses():
 @login_required
 @app.route('/user/balance', methods=['GET'])
 def user_balance():
-    # TODO: Balance less than zero?
     balance = current_user._balance()
-    if balance < 0:
-        balance = 0
     return json.dumps([
             {"name": "Expenses", "y": current_user._total_expense()},
-            {"name": "Income", "y": current_user._total_income()},
-            {"name": "Balance", "y": balance}
+            {"name": "Income", "y": current_user._total_income()}
         ])
