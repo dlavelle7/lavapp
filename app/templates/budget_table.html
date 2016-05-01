@@ -2,8 +2,7 @@
     <tr>
         <th>Name</th>
         <th>Date created</th>
-        <th>Amount</th>
-        <th></th>
+        <th colspan="2">Amount</th>
     </tr>
 {% for model in models %}
 <tr>
@@ -20,12 +19,10 @@
 </tr>
 {% endfor %}
 <tr>
-    <td></td>
-    <td><b>Total Monthly Income:</b></td>
+    <td colspan="2"><b>Total Monthly Income:</b></td>
     <td><b>€{{total}}</b></td>
+    <td></td>
 </tr>
 </table>
 
 <hr>
-
-

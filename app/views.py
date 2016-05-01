@@ -95,11 +95,6 @@ def forgot():
     return render_template('forgot.html', title="Forgot Password", form=form)
 
 @login_required
-@app.route('/budgeting', methods=['GET', 'POST'])
-def budgeting():
-    return render_template('budgeting.html', title="Budgeting")
-
-@login_required
 @app.route('/income', methods=['GET', 'POST'])
 def income():
     form = IncomeForm()
@@ -110,6 +105,7 @@ def income():
         return redirect(url_for('income'))
     return render_template('income.html', title="Income", form=form)
 
+@login_required
 @app.route('/delete/income/<int:model_id>', methods=['POST'])
 def delete_income(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
