@@ -143,8 +143,7 @@ def delete_expense(model_id):
 def user_incomes():
     incomes = []
     for income in current_user.incomes:
-        incomes.append({"name": incomes.name, "y": incomes.total})
-
+        incomes.append({"name": income.name, "y": income.total})
     return json.dumps(incomes)
 
 @login_required
@@ -153,5 +152,17 @@ def user_expenses():
     expenses = []
     for expense in current_user.expenses:
         expenses.append({"name": expense.name, "y": expense.total})
-
     return json.dumps(expenses)
+
+@login_required
+@app.route('/user/balance', methods=['GET'])
+def user_balance():
+    # TODO: Balance less than zero?
+    balance = current_user._balance()
+    if balance < 0:
+        balance = 0
+    return json.dumps([
+            {"name": "Expenses", "y": current_user._total_expense()},
+            {"name": "Income", "y": current_user._total_income()},
+            {"name": "Balance", "y": balance}
+        ])
