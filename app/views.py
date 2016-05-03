@@ -94,8 +94,8 @@ def forgot():
         flash('{0}'.format(form.data))
     return render_template('forgot.html', title="Forgot Password", form=form)
 
-@login_required
 @app.route('/income', methods=['GET', 'POST'])
+@login_required
 def income():
     form = IncomeForm()
     if form.validate_on_submit():
@@ -105,8 +105,8 @@ def income():
         return redirect(url_for('income'))
     return render_template('income.html', title="Income", form=form)
 
-@login_required
 @app.route('/delete/income/<int:model_id>', methods=['POST'])
+@login_required
 def delete_income(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
     income = Income.query.get(model_id)
@@ -114,8 +114,8 @@ def delete_income(model_id):
         delete_commit_model(income)
     return redirect(url_for('income'))
 
-@login_required
 @app.route('/expense', methods=['GET', 'POST'])
+@login_required
 def expense():
     form = ExpenseForm()
     if form.validate_on_submit():
@@ -134,24 +134,24 @@ def delete_expense(model_id):
         delete_commit_model(expense)
     return redirect(url_for('expense'))
 
-@login_required
 @app.route('/user/incomes', methods=['GET'])
+@login_required
 def user_incomes():
     incomes = []
     for income in current_user.incomes:
         incomes.append({"name": income.name, "y": income.total})
     return json.dumps(incomes)
 
-@login_required
 @app.route('/user/expenses', methods=['GET'])
+@login_required
 def user_expenses():
     expenses = []
     for expense in current_user.expenses:
         expenses.append({"name": expense.name, "y": expense.total})
     return json.dumps(expenses)
 
-@login_required
 @app.route('/user/balance', methods=['GET'])
+@login_required
 def user_balance():
     balance = current_user._balance()
     return json.dumps([

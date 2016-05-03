@@ -28,6 +28,8 @@
 <hr>
 
 <script>
+// TODO: Different types of graphs
+// TODO: Improve graph layout
 function drawPieChart(data, div_id) {
     $(div_id).highcharts({
         chart: {
@@ -64,6 +66,7 @@ function drawPieChart(data, div_id) {
     });
 }
 
+// TODO: Put common stuff into function
 // Make AJAX requests
 $.ajax({
     url: '/user/balance',
