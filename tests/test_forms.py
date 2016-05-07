@@ -1,15 +1,15 @@
-import os
-import unittest
+import base_test
 from app import app
-from app.forms import IncomeForm
+from app.forms import IncomeForm, ExpenseForm
 
 
-class TestForms(unittest.TestCase):
-
-    def setUp(self):
-        app.config['TESTING'] = True
-        app.config['WTF_CSRF_ENABLED'] = False
+class TestForms(base_test.BaseTest):
 
     def test_income_form(self):
         with app.app_context():
-            form = IncomeForm(name='foo', interval='monthly', amount=123.123)
+            # Assert correct argument values
+            ex_form = ExpenseForm(name='bar', interval='weekly', amount=100.0,
+                    shared_by=2)
+            expect = {'amount': 100.0, 'interval': u'weekly', 'shared_by': 2,
+                    'name': 'bar'}
+            self.assertEqual(expect, ex_form.data)
