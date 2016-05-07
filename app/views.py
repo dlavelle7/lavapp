@@ -154,7 +154,6 @@ def user_expenses():
 @login_required
 def user_balance():
     balance = current_user._balance()
-    return json.dumps([
-            {"name": "Expenses", "y": current_user._total_expense()},
-            {"name": "Income", "y": current_user._total_income()}
-        ])
+    data = [{"name": u"Expenses", "y": current_user._total_expense()},
+            {"name": u"Income", "y": current_user._total_income()}]
+    return json.dumps(data)
