@@ -22,6 +22,7 @@ function drawPieChart(data, div_id) {
         },
         plotOptions: {
             pie: {
+                size: "100%",
                 allowPointSelect: true,
                 cursor: 'pointer',
                 dataLabels: {
@@ -43,7 +44,7 @@ function drawPieChart(data, div_id) {
 
 $( document ).ready(function() {
     $.ajax({
-        url: '/user/balance',
+        url: '/user/summary',
         dataType: 'json',
         success: function(data) {
             drawPieChart(data, '#container-summary')

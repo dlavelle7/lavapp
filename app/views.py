@@ -150,10 +150,9 @@ def user_expenses():
         expenses.append({"name": expense.name, "y": expense.total})
     return json.dumps(expenses)
 
-@app.route('/user/balance', methods=['GET'])
+@app.route('/user/summary', methods=['GET'])
 @login_required
-def user_balance():
-    balance = current_user._balance()
+def user_summary():
     data = [{"name": u"Expenses", "y": current_user._total_expense()},
             {"name": u"Income", "y": current_user._total_income()}]
     return json.dumps(data)
