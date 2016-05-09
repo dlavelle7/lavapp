@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="span10 offset1">
 <h2>Budgeting Summary</h2>
 <h4>Monthly Balance: €{{current_user.balance}}</h4>
 {% if current_user._total_expense() == 0 and current_user._total_income() == 0 %}
@@ -25,8 +24,6 @@
 {% else %}
     <p>Please add an <a href="{{url_for('income')}}">Income</a>.</p>
 {% endif %}
-
-</div>
 
 <script src="/static/js/draw_chart.js"></script>
 
