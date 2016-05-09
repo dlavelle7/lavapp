@@ -33,6 +33,7 @@ class BaseBudgetForm(Form):
             validators=[NumberRange(min=0.01)])
 
 
+# TODO: Handle user putting in commas
 class IncomeForm(BaseBudgetForm):
     pass
 

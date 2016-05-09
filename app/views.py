@@ -8,6 +8,7 @@ from app.models import User, Income, Expense
 from app import db
 from sqlalchemy.exc import IntegrityError
 from app.emails import send_registration_email
+from decimal import Decimal
 
 
 #@app.before_request
@@ -30,6 +31,12 @@ def delete_commit_model(model):
     except Exception as e:
         print e
         db.session.rollback()
+
+def amount_default(obj):
+    """Convert non serializable decimal types to float for graphs."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
 
 @app.login_manager.user_loader
 def load_user(user_id):
@@ -140,7 +147,7 @@ def user_incomes():
     incomes = []
     for income in current_user.incomes:
         incomes.append({"name": income.name, "y": income.total})
-    return json.dumps(incomes)
+    return json.dumps(incomes, default=amount_default)
 
 @app.route('/user/expenses', methods=['GET'])
 @login_required
@@ -148,11 +155,11 @@ def user_expenses():
     expenses = []
     for expense in current_user.expenses:
         expenses.append({"name": expense.name, "y": expense.total})
-    return json.dumps(expenses)
+    return json.dumps(expenses, default=amount_default)
 
 @app.route('/user/summary', methods=['GET'])
 @login_required
 def user_summary():
     data = [{"name": u"Expenses", "y": current_user._total_expense()},
             {"name": u"Income", "y": current_user._total_income()}]
-    return json.dumps(data)
+    return json.dumps(data, default=amount_default)

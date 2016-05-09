@@ -1,54 +1,68 @@
 from app import db
 from app.models import User, Income, Expense, round_for_currency
+from decimal import Decimal
 import base_test
+import datetime
 
+
+# TODO: Fix Decimal income amounts
 
 class TestSum(base_test.BaseTest):
 
     def test_monthly_income(self):
         # Create a new user
+        # TODO: Put john in base test
         user = User(username='john', password='pass', email='john@foo.com')
         db.session.add(user)
         db.session.commit()
 
         # Create a new income
         self.assertEqual('0.00', user.total_income)
-        income = Income(name='salary', amount=4321.09, user_id=user.id,
-                interval='weekly')
+        income = Income(name='salary', amount=Decimal('4321.09'),
+                user_id=user.id, interval='weekly')
         db.session.add(income)
         db.session.commit()
         self.assertTrue(income in user.incomes)
 
         income = Income.query.filter(Income.name == 'salary').first()
         self.assertEquals(income.name, 'salary')
-        self.assertEquals(income.amount, 4321.09)
+        self.assertEquals(income.amount, Decimal('4321.09'))
         self.assertEquals(income.user_id, 1)
 
-        income2 = Income(name='investment', amount=123.0, user_id=user.id,
-                interval='weekly')
+        income2 = Income(name='investment', amount=Decimal('123.0'),
+                user_id=user.id, interval='weekly')
         db.session.add(income2)
         db.session.commit()
         self.assertTrue(income2 in user.incomes)
         self.assertEquals(2, len(user.incomes)) # lazy 'select' returns list
         self.assertEquals(user.incomes[0].user, user) # 'backref'
+        self.assertEquals(income2.amount, Decimal('123.0'))
 
     def test_total_property(self):
-        income = Income(name='salary', amount=100.05, user_id=100,
-                interval='weekly')
-        self.assertEqual(400.2, income.total)
-        income.interval = 'monthly'
-        self.assertEqual(100.05, income.total)
-        income.amount = 120.0
-        income.interval = "yearly"
-        self.assertEqual(10, income.total)
-        income.amount = 350.00
-        income.interval = "bimonthly"
-        self.assertEqual(175.00, income.total)
-        income.amount = 300.00
-        income.interval = "quarterly"
-        self.assertEqual(100.0, income.total)
+        income = Income(name='salary', amount=Decimal('100.1'),
+                user_id=100, interval='weekly')
+        # Assert with weekly interval total = amount x 4
+        self.assertEqual(income.total, income.amount * 4)
+
+        # Assert with fortnightly interval total = amount x 2
         income.interval = "fortnightly"
-        self.assertEqual(600.0, income.total)
+        self.assertEqual(income.total, income.amount * 2)
+
+        # Assert with monthly interval total = amount
+        income.interval = 'monthly'
+        self.assertEqual(income.total, income.amount)
+
+        # Assert with bimonthly interval total = amount / 2
+        income.interval = "bimonthly"
+        self.assertEqual(income.total, income.amount / 2)
+
+        # Assert with quarterly interval total = amount / 3
+        income.interval = "quarterly"
+        self.assertEqual(income.total, income.amount / 3)
+
+        # Assert with yearly interval total = amount / 12
+        income.interval = "yearly"
+        self.assertEqual(income.total, income.amount / 12)
 
     def test_rounded_total_property(self):
         income = Income(name='salary', amount=2.222, user_id=100,
@@ -64,7 +78,16 @@ class TestSum(base_test.BaseTest):
         self.assertEqual('10.01', income.rounded_total)
 
     def test_round_for_currency(self):
+        self.assertEqual('50,000,000.00', round_for_currency(50000000))
         self.assertEqual('5,000,000.00', round_for_currency(5000000))
+        self.assertEqual('5,000.00', round_for_currency(5000))
+        self.assertEqual('500.00', round_for_currency(500))
+
+    def test_sum_date(self):
+        income = Income(name='salary', amount=Decimal('123'), user_id=100,
+                interval='weekly')
+        income.date_created = datetime.datetime(2000, 12, 28, 04, 50)
+        self.assertEqual(income.formatted_date_created, '28-12-2000')
 
     def test_expense(self):
         user = User(username='john', password='pass', email='john@foo.com')

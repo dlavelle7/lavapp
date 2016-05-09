@@ -81,7 +81,7 @@ class Sum(db.Model):
     __tablename__ = "sum"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    amount = db.Column(db.Float)  # Decimal for precision
+    amount = db.Column(db.Numeric)  # Decimal for precision with finances
     date_created = db.Column(db.DateTime)
     interval = db.Column(db.String(64))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
