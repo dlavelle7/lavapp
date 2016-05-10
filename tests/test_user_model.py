@@ -2,6 +2,7 @@ import base_test
 from app import db
 from app.models import User, Income, Expense
 from sqlalchemy.exc import IntegrityError
+from decimal import Decimal
 
 
 class TestUser(base_test.BaseTest):
@@ -30,7 +31,8 @@ class TestUser(base_test.BaseTest):
         self.assertTrue(user.verify_password('pass'))
         
         # Try create another john
-        john2 = User(username='john', password='password', email='john22@bar.com')
+        john2 = User(username='john', password='password',
+                email='john22@bar.com')
         db.session.add(john2)
         self.assertRaises(IntegrityError, db.session.commit)
         db.session.rollback()
@@ -43,11 +45,11 @@ class TestUser(base_test.BaseTest):
         user = User(username='john', password='pass', email='john@foo.com')
         db.session.add(user)
         db.session.commit()
-        income = Income(name='salary', amount=100, user_id=user.id,
+        income = Income(name='salary', amount=Decimal(100), user_id=user.id,
                 interval='weekly')
         db.session.add(income)
-        income2 = Income(name='investment', amount=555, user_id=user.id,
-                interval='monthly')
+        income2 = Income(name='investment', amount=Decimal(555),
+                user_id=user.id, interval='monthly')
         db.session.add(income2)
         db.session.commit()
         self.assertEqual('955.00', user.total_income)
@@ -61,28 +63,27 @@ class TestUser(base_test.BaseTest):
         db.session.add(user)
         db.session.commit()
 
-        income = Income(name='salary', amount=100, user_id=user.id,
+        income = Income(name='salary', amount=Decimal(100), user_id=user.id,
                 interval='weekly')
         db.session.add(income)
-        income2 = Income(name='investment', amount=555, user_id=user.id,
-                interval='monthly')
+        income2 = Income(name='investment', amount=Decimal(555),
+                user_id=user.id, interval='monthly')
         db.session.add(income2)
         db.session.commit()
         self.assertEqual('955.00', user.total_income)
         self.assertEqual('955.00', user.balance)
 
-        expense = Expense(name='rent', amount=1250.0, user_id=user.id,
+        expense = Expense(name='rent', amount=Decimal(1250.0), user_id=user.id,
                 interval='monthly', shared_by=2)
-        self.assertEqual(expense.total, 625)
+        self.assertEqual(expense.total, 625.0)
         db.session.add(expense)
         db.session.commit()
 
-
         self.assertEqual('330.00', user.balance)
 
-        expense2 = Expense(name='UPC', amount=60.0, user_id=user.id,
+        expense2 = Expense(name='UPC', amount=Decimal(60.0), user_id=user.id,
                 interval='monthly', shared_by=2)
-        self.assertEqual(expense2.total, 30)
+        self.assertEqual(expense2.total, 30.0)
         db.session.add(expense2)
         db.session.commit()
 

@@ -1,11 +1,9 @@
 from app import db
 from app.models import User, Income, Expense, round_for_currency
-from decimal import Decimal
 import base_test
 import datetime
+from decimal import Decimal
 
-
-# TODO: Fix Decimal income amounts
 
 class TestSum(base_test.BaseTest):
 
@@ -39,41 +37,41 @@ class TestSum(base_test.BaseTest):
         self.assertEquals(income2.amount, Decimal('123.0'))
 
     def test_total_property(self):
-        income = Income(name='salary', amount=Decimal('100.1'),
+        income = Income(name='salary', amount=Decimal('600.0'),
                 user_id=100, interval='weekly')
         # Assert with weekly interval total = amount x 4
-        self.assertEqual(income.total, income.amount * 4)
+        self.assertEqual(2400.0, income.total)
 
         # Assert with fortnightly interval total = amount x 2
         income.interval = "fortnightly"
-        self.assertEqual(income.total, income.amount * 2)
+        self.assertEqual(1200.0, income.total)
 
         # Assert with monthly interval total = amount
         income.interval = 'monthly'
-        self.assertEqual(income.total, income.amount)
+        self.assertEqual(600.0, income.total)
 
         # Assert with bimonthly interval total = amount / 2
         income.interval = "bimonthly"
-        self.assertEqual(income.total, income.amount / 2)
+        self.assertEqual(300.0, income.total)
 
         # Assert with quarterly interval total = amount / 3
         income.interval = "quarterly"
-        self.assertEqual(income.total, income.amount / 3)
+        self.assertEqual(200.0, income.total)
 
         # Assert with yearly interval total = amount / 12
         income.interval = "yearly"
-        self.assertEqual(income.total, income.amount / 12)
+        self.assertEqual(50.0, income.total)
 
     def test_rounded_total_property(self):
-        income = Income(name='salary', amount=2.222, user_id=100,
+        income = Income(name='salary', amount=Decimal(2.222), user_id=100,
                 interval='weekly')
         self.assertEqual('8.89', income.rounded_total)
-        income = Income(name='salary', amount=123.455, user_id=100,
+        income = Income(name='salary', amount=Decimal(123.455), user_id=100,
                 interval='monthly')
         self.assertEqual('123.45', income.rounded_total)
-        income.amount = 1.200
+        income.amount = Decimal(1.200)
         self.assertEqual('1.20', income.rounded_total)
-        income = Income(name='salary', amount=120.12, user_id=100,
+        income = Income(name='salary', amount=Decimal(120.12), user_id=100,
                 interval='yearly')
         self.assertEqual('10.01', income.rounded_total)
 
@@ -95,12 +93,12 @@ class TestSum(base_test.BaseTest):
         db.session.commit()
 
         self.assertEqual('0.00', user.total_expense)
-        expense = Expense(name='rent', amount=1250.0, user_id=user.id,
+        expense = Expense(name='rent', amount=Decimal(1250.0), user_id=user.id,
                 interval='monthly', shared_by=2)
-        self.assertEqual(expense.total, 625)
-        expense2 = Expense(name='UPC', amount=60.0, user_id=user.id,
+        self.assertEqual(expense.total, 625.0)
+        expense2 = Expense(name='UPC', amount=Decimal(60.0), user_id=user.id,
                 interval='monthly', shared_by=2)
-        self.assertEqual(expense2.total, 30)
+        self.assertEqual(expense2.total, 30.0)
         db.session.add(expense)
         db.session.add(expense2)
         db.session.commit()
@@ -112,6 +110,6 @@ class TestSum(base_test.BaseTest):
 
         self.assertEqual(user.total_expense, '655.00')
 
-        expense3 = Expense(name='Water', amount=60.0, user_id=user.id,
+        expense3 = Expense(name='Water', amount=Decimal(60.0), user_id=user.id,
                 interval='quarterly', shared_by=2)
         self.assertEqual(expense3.total, 10.0)
