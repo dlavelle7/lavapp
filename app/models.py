@@ -16,8 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(64))
     email = db.Column(db.String(64))
-    incomes = db.relationship("Income", backref='user')
-    expenses = db.relationship("Expense", backref='user')
+    budgets = db.relationship("Budget", backref='user')
 
     def __init__(self, username, password, email):
         self.username = username
@@ -75,7 +74,21 @@ class User(db.Model):
         return self._total_income() - self._total_expense()
 
 
-# TODO: Split models module (one class per module)
+class Budget(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    incomes = db.relationship("Income", backref='budget')
+    expenses = db.relationship("Expense", backref='budget')
+    date_created = db.Column(db.DateTime)
+
+    def __init__(self, name, user_id):
+        self.name = name
+        self.user_id = user_id
+        self.date_created = datetime.datetime.now()
+
+
 class Sum(db.Model):
 
     __tablename__ = "sum"
@@ -84,7 +97,7 @@ class Sum(db.Model):
     amount = db.Column(db.Numeric)  # Decimal for precision with finances
     date_created = db.Column(db.DateTime)
     interval = db.Column(db.String(64))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
 
     type = db.Column(db.String(50))
     __mapper_args__ = {
@@ -92,10 +105,10 @@ class Sum(db.Model):
         'polymorphic_on':type
     }
 
-    def __init__(self, name, amount, user_id, interval):
+    def __init__(self, name, amount, budget_id, interval):
         self.name = name
         self.amount = amount
-        self.user_id = user_id
+        self.budget_id = budget_id
         self.date_created = datetime.datetime.now()
         self.interval = interval
 
@@ -137,8 +150,8 @@ class Expense(Sum):
         'polymorphic_identity':'expense',
     }
 
-    def __init__(self, name, amount, user_id, interval, shared_by):
-        super(Expense, self).__init__(name, amount, user_id, interval)
+    def __init__(self, name, amount, budget_id, interval, shared_by):
+        super(Expense, self).__init__(name, amount, budget_id, interval)
         self.shared_by = shared_by
 
     @property
