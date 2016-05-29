@@ -22,6 +22,10 @@ class ForgotForm(Form):
     forgot = StringField('forgot', validators=[DataRequired(), Email()])
 
 
+class BudgetForm(Form):
+    name = StringField('name', validators=[DataRequired()])
+
+
 class BaseBudgetForm(Form):
     interval_choices = [('weekly', 'Weekly'),('fortnightly', 'Fortnightly'),
             ('monthly', 'Monthly'), ('bimonthly', 'Bimonthly'),

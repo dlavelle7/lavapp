@@ -2,9 +2,9 @@ import json
 from app import app
 from flask import render_template, flash, redirect, g, url_for, session
 from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm, \
-        ExpenseForm
+        ExpenseForm, BudgetForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
-from app.models import User, Income, Expense
+from app.models import User, Income, Expense, Budget
 from app import db
 from sqlalchemy.exc import IntegrityError
 from app.emails import send_registration_email
@@ -101,6 +101,16 @@ def forgot():
         flash('{0}'.format(form.data))
     return render_template('forgot.html', title="Forgot Password", form=form)
 
+@app.route('/budget', methods=['GET', 'POST'])
+@login_required
+def budget():
+    form = BudgetForm()
+    if form.validate_on_submit():
+        flash('{0}, {1}'.format(form.name.data, current_user.id))
+        budget = Budget(form.name.data, current_user.id)
+        add_commit_model(budget)
+    return render_template('budget.html', title="Budget", form=form)
+
 @app.route('/income', methods=['GET', 'POST'])
 @login_required
 def income():
@@ -140,6 +150,13 @@ def delete_expense(model_id):
     if expense:
         delete_commit_model(expense)
     return redirect(url_for('expense'))
+
+@app.route('/delete/budget/<int:model_id>', methods=['POST'])
+def delete_budget(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        delete_commit_model(budget)
+    return redirect(url_for('budget'))
 
 @app.route('/user/incomes', methods=['GET'])
 @login_required
