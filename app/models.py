@@ -88,6 +88,10 @@ class Budget(db.Model):
         self.user_id = user_id
         self.date_created = datetime.datetime.now()
 
+    @property
+    def formatted_date_created(self):
+        return format_date(self.date_created)
+
 
 class Sum(db.Model):
 

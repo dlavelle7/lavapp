@@ -1,6 +1,7 @@
 import json
 from app import app
-from flask import render_template, flash, redirect, g, url_for, session
+from flask import render_template, flash, redirect, g, url_for, session, \
+        request
 from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm, \
         ExpenseForm, BudgetForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
@@ -106,21 +107,23 @@ def forgot():
 def budget():
     form = BudgetForm()
     if form.validate_on_submit():
-        flash('{0}, {1}'.format(form.name.data, current_user.id))
         budget = Budget(form.name.data, current_user.id)
         add_commit_model(budget)
+        return redirect(url_for('income', budget_id=budget.id))
     return render_template('budget.html', title="Budget", form=form)
 
 @app.route('/income', methods=['GET', 'POST'])
 @login_required
 def income():
+    budget = Budget.query.get(request.args.get("budget_id"))
     form = IncomeForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and budget:
         income = Income(name=form.name.data, amount=form.amount.data,
-                user_id=current_user.id, interval=form.interval.data)
+                budget_id=budget.id, interval=form.interval.data)
         add_commit_model(income)
-        return redirect(url_for('income'))
-    return render_template('income.html', title="Income", form=form)
+        return redirect(url_for('income', budget_id=budget.id))
+    return render_template('income.html', title="Income", form=form,
+            budget=budget)
 
 @app.route('/delete/income/<int:model_id>', methods=['POST'])
 @login_required
