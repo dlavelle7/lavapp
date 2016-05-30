@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>Income</h3>
+<h3>Income - {{budget.name}}</h3>
 <h4>Current Monthly Incomes</h4>
 
 {% with models=budget.incomes, total=budget.total_income,
@@ -43,5 +43,6 @@
     </form>
     </tr>
 </table>
+<a href="{{url_for('budget')}}">Back to budgets</a>
 
 {% endblock %}

@@ -52,6 +52,25 @@ class User(db.Model):
     def get(user_id):
         return User.query.get(user_id)
 
+
+class Budget(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    incomes = db.relationship("Income", backref='budget')
+    expenses = db.relationship("Expense", backref='budget')
+    date_created = db.Column(db.DateTime)
+
+    def __init__(self, name, user_id):
+        self.name = name
+        self.user_id = user_id
+        self.date_created = datetime.datetime.now()
+
+    @property
+    def formatted_date_created(self):
+        return format_date(self.date_created)
+
     def _total_income(self):
         return sum(income.total for income in self.incomes)
 
@@ -72,25 +91,6 @@ class User(db.Model):
 
     def _balance(self):
         return self._total_income() - self._total_expense()
-
-
-class Budget(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    incomes = db.relationship("Income", backref='budget')
-    expenses = db.relationship("Expense", backref='budget')
-    date_created = db.Column(db.DateTime)
-
-    def __init__(self, name, user_id):
-        self.name = name
-        self.user_id = user_id
-        self.date_created = datetime.datetime.now()
-
-    @property
-    def formatted_date_created(self):
-        return format_date(self.date_created)
 
 
 class Sum(db.Model):

@@ -130,9 +130,8 @@ def income():
 def delete_income(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
     income = Income.query.get(model_id)
-    if income:
-        delete_commit_model(income)
-    return redirect(url_for('income'))
+    delete_commit_model(income)
+    return redirect(url_for('income', budget_id=income.budget_id))
 
 @app.route('/expense', methods=['GET', 'POST'])
 @login_required
@@ -152,9 +151,8 @@ def expense():
 def delete_expense(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
     expense = Expense.query.get(model_id)
-    if expense:
-        delete_commit_model(expense)
-    return redirect(url_for('expense'))
+    delete_commit_model(expense)
+    return redirect(url_for('expense', budget_id=expense.budget_id))
 
 @app.route('/delete/budget/<int:model_id>', methods=['POST'])
 def delete_budget(model_id):
