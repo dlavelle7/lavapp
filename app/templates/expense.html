@@ -4,7 +4,7 @@
 <h3>Expenditure</h3>
 <h4>Current Monthly Expenses</h4>
 
-{% with models=current_user.expenses, total=current_user.total_expense,
+{% with models=budget.expenses, total=budget.total_expense,
         delete='delete_expense' %}
     {% include "budget_table.html" %}
 {% endwith %}

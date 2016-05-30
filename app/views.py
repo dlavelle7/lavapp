@@ -115,8 +115,8 @@ def budget():
 @app.route('/income', methods=['GET', 'POST'])
 @login_required
 def income():
-    budget = Budget.query.get(request.args.get("budget_id"))
     form = IncomeForm()
+    budget = Budget.query.get(request.args.get("budget_id"))
     if form.validate_on_submit() and budget:
         income = Income(name=form.name.data, amount=form.amount.data,
                 budget_id=budget.id, interval=form.interval.data)
@@ -138,13 +138,15 @@ def delete_income(model_id):
 @login_required
 def expense():
     form = ExpenseForm()
-    if form.validate_on_submit():
+    budget = Budget.query.get(request.args.get("budget_id"))
+    if form.validate_on_submit() and budget:
         expense = Expense(name=form.name.data, amount=form.amount.data,
-                user_id=current_user.id, interval=form.interval.data,
+                budget_id=budget.id, interval=form.interval.data,
                 shared_by=form.shared_by.data)
         add_commit_model(expense)
-        return redirect(url_for('expense'))
-    return render_template('expense.html', title="Expense", form=form)
+        return redirect(url_for('expense', budget_id=budget.id))
+    return render_template('expense.html', title="Expense", form=form,
+            budget=budget)
 
 @app.route('/delete/expense/<int:model_id>', methods=['POST'])
 def delete_expense(model_id):
