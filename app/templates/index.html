@@ -3,7 +3,16 @@
 <h3>Budgeting Summary</h3>
 
 {% if current_user.budgets %}
-<h4>Individual Budget</h4>
+<h4>Individual Budget Analysis</h4>
+<select onchange="drawBudget();" id="selectBudget">
+    {% for budget in current_user.budgets %}
+        <option value="{{budget.id}}">{{budget.name}}</option>
+    {% endfor %}
+</select>
+
+<div id='container-summary'></div>
+<div id='container-expense'></div>
+<div id='container-income'></div>
 
 <hr>
 <h4>Compare Budgets</h4>

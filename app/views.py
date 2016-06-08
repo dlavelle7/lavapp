@@ -161,25 +161,32 @@ def delete_budget(model_id):
         delete_commit_model(budget)
     return redirect(url_for('budget'))
 
-@app.route('/user/incomes', methods=['GET'])
+@app.route('/budget/<int:model_id>/incomes', methods=['GET'])
 @login_required
-def user_incomes():
-    incomes = []
-    for income in current_user.incomes:
-        incomes.append({"name": income.name, "y": income.total})
-    return json.dumps(incomes, default=amount_default)
+def budget_incomes(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        incomes = []
+        for income in budget.incomes:
+            incomes.append({"name": income.name, "y": income.total})
+        # TODO: Use simple json to parse decimal, its built in python3
+        return json.dumps(incomes, default=amount_default)
 
-@app.route('/user/expenses', methods=['GET'])
+@app.route('/budget/<int:model_id>/expenses', methods=['GET'])
 @login_required
-def user_expenses():
-    expenses = []
-    for expense in current_user.expenses:
-        expenses.append({"name": expense.name, "y": expense.total})
-    return json.dumps(expenses, default=amount_default)
+def budget_expenses(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        expenses = []
+        for expense in budget.expenses:
+            expenses.append({"name": expense.name, "y": expense.total})
+        return json.dumps(expenses, default=amount_default)
 
-@app.route('/user/summary', methods=['GET'])
+@app.route('/budget/<int:model_id>/summary', methods=['GET'])
 @login_required
-def user_summary():
-    data = [{"name": u"Expenses", "y": current_user._total_expense()},
-            {"name": u"Income", "y": current_user._total_income()}]
-    return json.dumps(data, default=amount_default)
+def budget_summary(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        data = [{"name": u"Expenses", "y": budget._total_expense()},
+                {"name": u"Income", "y": budget._total_income()}]
+        return json.dumps(data, default=amount_default)
