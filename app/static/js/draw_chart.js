@@ -16,7 +16,6 @@ function getDataAndDraw(budgetId) {
         url: '/budget/' + budgetId + '/summary',
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             drawPieChart(data, '#container-summary')
         }
     });
@@ -25,7 +24,6 @@ function getDataAndDraw(budgetId) {
         url: '/budget/' + budgetId + '/expenses',
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             drawPieChart(data, '#container-expense')
         }
     });
@@ -34,7 +32,6 @@ function getDataAndDraw(budgetId) {
         url: '/budget/' + budgetId + '/incomes',
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             drawPieChart(data, '#container-income')
         }
     });

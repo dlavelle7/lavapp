@@ -4,6 +4,7 @@
 
 {% if current_user.budgets %}
 <h4>Individual Budget Analysis</h4>
+<label for="selectBudget">Change budget</label>
 <select onchange="drawBudget();" id="selectBudget">
     {% for budget in current_user.budgets %}
         <option value="{{budget.id}}">{{budget.name}}</option>
@@ -20,7 +21,7 @@
 <script src="/static/js/draw_chart.js"></script>
 
 {% else %}
-<p>You currently have no budgets. <a href="{{url_for('budget')}}">Create a budget now.</a></p>
+<p>You currently have no budgets. <a href="{{url_for('budget')}}">Create a budget.</a></p>
 
 {% endif %}
 
