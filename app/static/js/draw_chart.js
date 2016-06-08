@@ -38,7 +38,6 @@ function getDataAndDraw(budgetId) {
 }
 
 function drawPieChart(data, div_id) {
-    var title = capitalize(div_id.split("-")[1])
     $(div_id).highcharts({
         chart: {
             plotBackgroundColor: null,
@@ -47,7 +46,7 @@ function drawPieChart(data, div_id) {
             type: 'pie'
         },
         title: {
-            text: title
+            text: data["title"]
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -67,13 +66,9 @@ function drawPieChart(data, div_id) {
             }
         },
         series: [{
-            name: title,
+            name: data["title"],
             colorByPoint: true,
-            data: data
+            data: data["data"]
         }]
     });
-}
-
-function capitalize(string_value) {
-    return string_value.charAt(0).toUpperCase() + string_value.slice(1);
 }

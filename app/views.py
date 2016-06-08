@@ -163,7 +163,8 @@ def budget_incomes(model_id):
         incomes = []
         for income in budget.incomes:
             incomes.append({"name": income.name, "y": income.total})
-        return simplejson.dumps(incomes)
+        title = "Income - {0}".format(budget.name)
+        return simplejson.dumps({"data": incomes, "title": title})
 
 @app.route('/budget/<int:model_id>/expenses', methods=['GET'])
 @login_required
@@ -173,13 +174,15 @@ def budget_expenses(model_id):
         expenses = []
         for expense in budget.expenses:
             expenses.append({"name": expense.name, "y": expense.total})
-        return simplejson.dumps(expenses)
+        title = "Expense - {0}".format(budget.name)
+        return simplejson.dumps({"data": expenses, "title": title})
 
 @app.route('/budget/<int:model_id>/summary', methods=['GET'])
 @login_required
 def budget_summary(model_id):
     budget = Budget.query.get(model_id)
     if budget:
-        data = [{"name": u"Expenses", "y": budget._total_expense()},
+        data = [{"name": u"Expense", "y": budget._total_expense()},
                 {"name": u"Income", "y": budget._total_income()}]
-        return simplejson.dumps(data)
+        title = "Summary - {0}".format(budget.name)
+        return simplejson.dumps({"data": data, "title": title})
