@@ -1,4 +1,4 @@
-import json
+import simplejson
 from app import app
 from flask import render_template, flash, redirect, g, url_for, session, \
         request
@@ -32,12 +32,6 @@ def delete_commit_model(model):
     except Exception as e:
         print e
         db.session.rollback()
-
-def amount_default(obj):
-    """Convert non serializable decimal types to float for graphs."""
-    if isinstance(obj, Decimal):
-        return float(obj)
-    raise TypeError
 
 @app.login_manager.user_loader
 def load_user(user_id):
@@ -169,8 +163,7 @@ def budget_incomes(model_id):
         incomes = []
         for income in budget.incomes:
             incomes.append({"name": income.name, "y": income.total})
-        # TODO: Use simple json to parse decimal, its built in python3
-        return json.dumps(incomes, default=amount_default)
+        return simplejson.dumps(incomes)
 
 @app.route('/budget/<int:model_id>/expenses', methods=['GET'])
 @login_required
@@ -180,7 +173,7 @@ def budget_expenses(model_id):
         expenses = []
         for expense in budget.expenses:
             expenses.append({"name": expense.name, "y": expense.total})
-        return json.dumps(expenses, default=amount_default)
+        return simplejson.dumps(expenses)
 
 @app.route('/budget/<int:model_id>/summary', methods=['GET'])
 @login_required
@@ -189,4 +182,4 @@ def budget_summary(model_id):
     if budget:
         data = [{"name": u"Expenses", "y": budget._total_expense()},
                 {"name": u"Income", "y": budget._total_income()}]
-        return json.dumps(data, default=amount_default)
+        return simplejson.dumps(data)
