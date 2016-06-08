@@ -1,30 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Budgeting Summary</h2>
-<h4>Monthly Balance: €{{current_user.balance}}</h4>
-{% if current_user._total_expense() == 0 and current_user._total_income() == 0 %}
-    <p>Please add an <a href="{{url_for('income')}}">Income</a> or an <a href="{{url_for('expense')}}">Expense</a>.</p>
-{% else %}
-    <div id="container-summary" style="width:100%; height:400px;"></div>
-{% endif %}
+<h3>Budgeting Summary</h3>
+
+{% if current_user.budgets %}
+<h4>Individual Budget</h4>
 
 <hr>
-<h4>Monthly Expense: €{{current_user.total_expense}}</h4>
-{% if current_user._total_expense() != 0 %}
-    <div id="container-expense" style="width:100%; height:400px;"></div>
-{% else %}
-    <p>Please add an <a href="{{url_for('expense')}}">Expense</a>.</p>
-{% endif %}
-
-<hr>
-
-<h4>Monthly Income: €{{current_user.total_income}}</h4>
-{% if current_user._total_income() != 0 %}
-    <div id="container-income" style="width:100%; height:400px;"></div>
-{% else %}
-    <p>Please add an <a href="{{url_for('income')}}">Income</a>.</p>
-{% endif %}
+<h4>Compare Budgets</h4>
 
 <script src="/static/js/draw_chart.js"></script>
+
+{% else %}
+<p>You currently have no budgets. <a href="{{url_for('budget')}}">Create a budget now.</a></p>
+
+{% endif %}
 
 {% endblock %}
