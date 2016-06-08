@@ -12,10 +12,6 @@ from app.emails import send_registration_email
 from decimal import Decimal
 
 
-#@app.before_request
-#def before_request():
-#    pass
-
 # TODO: Handle db transactions better
 def add_commit_model(model):
     try:

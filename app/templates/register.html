@@ -5,25 +5,25 @@
     {{form.hidden_tag()}} <!-- Implements CSRF prevention -->
     <p>Username
     {% for error in form.username.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+        <span style="color: red;">{{ error }}</span>
     {% endfor %}<br>
         {{form.username}}
     </p>
     <p>Password
     {% for error in form.password.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+        <span style="color: red;">{{ error }}</span>
     {% endfor %}<br>
         {{form.password}}
     </p>
     <p>Confirm Password
     {% for error in form.repeat_pass.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+        <span style="color: red;">{{ error }}</span>
     {% endfor %}<br>
         {{form.repeat_pass}}
     </p>
     <p>Email
     {% for error in form.email.errors %}
-        <span style="color: red;">[{{ error }}]</span>
+        <span style="color: red;">{{ error }}</span>
     {% endfor %}<br>
         {{form.email}}
     </p>
