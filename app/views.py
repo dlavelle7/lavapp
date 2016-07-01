@@ -11,6 +11,10 @@ from sqlalchemy.exc import IntegrityError
 from app.emails import send_registration_email
 from decimal import Decimal
 
+# TODO: Restrict users viewing each others views
+#@app.before_request
+#def before_request():
+#    pass
 
 # TODO: Handle db transactions better
 def add_commit_model(model):
