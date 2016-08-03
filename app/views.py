@@ -1,16 +1,17 @@
-import json
+import simplejson
 from app import app
-from flask import render_template, flash, redirect, g, url_for, session
+from flask import render_template, flash, redirect, g, url_for, session, \
+        request
 from app.forms import LoginForm, RegisterForm, ForgotForm, IncomeForm, \
-        ExpenseForm
+        ExpenseForm, BudgetForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
-from app.models import User, Income, Expense
+from app.models import User, Income, Expense, Budget
 from app import db
 from sqlalchemy.exc import IntegrityError
 from app.emails import send_registration_email
 from decimal import Decimal
 
-
+# TODO: Restrict users viewing each others views
 #@app.before_request
 #def before_request():
 #    pass
@@ -32,12 +33,6 @@ def delete_commit_model(model):
         print e
         db.session.rollback()
 
-def amount_default(obj):
-    """Convert non serializable decimal types to float for graphs."""
-    if isinstance(obj, Decimal):
-        return float(obj)
-    raise TypeError
-
 @app.login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
@@ -45,7 +40,7 @@ def load_user(user_id):
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', title="Home")
+    return render_template('index.html', title="Summary")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -101,65 +96,93 @@ def forgot():
         flash('{0}'.format(form.data))
     return render_template('forgot.html', title="Forgot Password", form=form)
 
+@app.route('/budget', methods=['GET', 'POST'])
+@login_required
+def budget():
+    form = BudgetForm()
+    if form.validate_on_submit():
+        budget = Budget(form.name.data, current_user.id)
+        add_commit_model(budget)
+        return redirect(url_for('income', budget_id=budget.id))
+    return render_template('budget.html', title="Budget", form=form)
+
 @app.route('/income', methods=['GET', 'POST'])
 @login_required
 def income():
     form = IncomeForm()
-    if form.validate_on_submit():
+    budget = Budget.query.get(request.args.get("budget_id"))
+    if form.validate_on_submit() and budget:
         income = Income(name=form.name.data, amount=form.amount.data,
-                user_id=current_user.id, interval=form.interval.data)
+                budget_id=budget.id, interval=form.interval.data)
         add_commit_model(income)
-        return redirect(url_for('income'))
-    return render_template('income.html', title="Income", form=form)
+        return redirect(url_for('income', budget_id=budget.id))
+    return render_template('income.html', title="Income", form=form,
+            budget=budget)
 
 @app.route('/delete/income/<int:model_id>', methods=['POST'])
 @login_required
 def delete_income(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
     income = Income.query.get(model_id)
-    if income:
-        delete_commit_model(income)
-    return redirect(url_for('income'))
+    delete_commit_model(income)
+    return redirect(url_for('income', budget_id=income.budget_id))
 
 @app.route('/expense', methods=['GET', 'POST'])
 @login_required
 def expense():
     form = ExpenseForm()
-    if form.validate_on_submit():
+    budget = Budget.query.get(request.args.get("budget_id"))
+    if form.validate_on_submit() and budget:
         expense = Expense(name=form.name.data, amount=form.amount.data,
-                user_id=current_user.id, interval=form.interval.data,
+                budget_id=budget.id, interval=form.interval.data,
                 shared_by=form.shared_by.data)
         add_commit_model(expense)
-        return redirect(url_for('expense'))
-    return render_template('expense.html', title="Expense", form=form)
+        return redirect(url_for('expense', budget_id=budget.id))
+    return render_template('expense.html', title="Expense", form=form,
+            budget=budget)
 
 @app.route('/delete/expense/<int:model_id>', methods=['POST'])
 def delete_expense(model_id):
     # TODO: HTML forms don't support DELETE. Workaround / XMLHttpRequest?
     expense = Expense.query.get(model_id)
-    if expense:
-        delete_commit_model(expense)
-    return redirect(url_for('expense'))
+    delete_commit_model(expense)
+    return redirect(url_for('expense', budget_id=expense.budget_id))
 
-@app.route('/user/incomes', methods=['GET'])
-@login_required
-def user_incomes():
-    incomes = []
-    for income in current_user.incomes:
-        incomes.append({"name": income.name, "y": income.total})
-    return json.dumps(incomes, default=amount_default)
+@app.route('/delete/budget/<int:model_id>', methods=['POST'])
+def delete_budget(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        delete_commit_model(budget)
+    return redirect(url_for('budget'))
 
-@app.route('/user/expenses', methods=['GET'])
+@app.route('/budget/<int:model_id>/incomes', methods=['GET'])
 @login_required
-def user_expenses():
-    expenses = []
-    for expense in current_user.expenses:
-        expenses.append({"name": expense.name, "y": expense.total})
-    return json.dumps(expenses, default=amount_default)
+def budget_incomes(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        incomes = []
+        for income in budget.incomes:
+            incomes.append({"name": income.name, "y": income.total})
+        title = "Income - {0}".format(budget.name)
+        return simplejson.dumps({"data": incomes, "title": title})
 
-@app.route('/user/summary', methods=['GET'])
+@app.route('/budget/<int:model_id>/expenses', methods=['GET'])
 @login_required
-def user_summary():
-    data = [{"name": u"Expenses", "y": current_user._total_expense()},
-            {"name": u"Income", "y": current_user._total_income()}]
-    return json.dumps(data, default=amount_default)
+def budget_expenses(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        expenses = []
+        for expense in budget.expenses:
+            expenses.append({"name": expense.name, "y": expense.total})
+        title = "Expense - {0}".format(budget.name)
+        return simplejson.dumps({"data": expenses, "title": title})
+
+@app.route('/budget/<int:model_id>/summary', methods=['GET'])
+@login_required
+def budget_summary(model_id):
+    budget = Budget.query.get(model_id)
+    if budget:
+        data = [{"name": u"Expense", "y": budget._total_expense()},
+                {"name": u"Income", "y": budget._total_income()}]
+        title = "Summary - {0}".format(budget.name)
+        return simplejson.dumps({"data": data, "title": title})

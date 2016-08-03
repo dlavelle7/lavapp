@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Budgets</h3>
+<h4>Current Budgets</h4>
+
+<table class="table table-hover">
+    <tr>
+        <th>Name</th>
+        <th>Date created</th>
+        <th>Total Income</th>
+        <th>Total Expense</th>
+        <th colspan="4">Balance</th>
+    </tr>
+{% for model in current_user.budgets %}
+<tr>
+    <td>{{model.name}}</td>
+    <td>{{model.formatted_date_created}}</td>
+    <td>€{{model.total_income}}</td>
+    <td>€{{model.total_expense}}</td>
+    <td>€{{model.balance}}</td>
+    <td><a href="{{url_for('income', budget_id=model.id)}}">Edit Incomes</a></td>
+    <td><a href="{{url_for('expense', budget_id=model.id)}}">Edit Expenses</a></td>
+    <td>
+        <form action="{{url_for('delete_budget', model_id=model.id)}}" method="POST">
+            <button class="btn btn-small btn-danger" type="submit">
+                <i class="icon-remove icon-white"></i>
+            </button>
+        </form>
+    </td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="3">Please create an entry in the form below</td>
+</tr>
+{% endfor %}
+</table>
+
+<hr>
+<h4>Add New Budget</h4>
+<table class="table table-bordered">
+    <tr>
+        <th>Budget name</th>
+    </tr>
+    <tr>
+    <form action="" method="post" name="budget">
+        {{form.hidden_tag()}}
+        <td>
+        {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+            {{form.name}}
+        </td>
+        <td>
+            <button class="btn btn-small btn-primary" type="submit">
+                <i class="icon-plus icon-white"></i>
+            </button>
+        </td>
+    </form>
+    </tr>
+</table>
+
+
+{% endblock %}

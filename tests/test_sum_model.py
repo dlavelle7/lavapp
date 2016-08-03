@@ -1,5 +1,5 @@
 from app import db
-from app.models import User, Income, Expense, round_for_currency
+from app.models import Income, Expense, round_for_currency, Budget
 import base_test
 import datetime
 from decimal import Decimal
@@ -7,38 +7,30 @@ from decimal import Decimal
 
 class TestSum(base_test.BaseTest):
 
-    def test_monthly_income(self):
-        # Create a new user
-        # TODO: Put john in base test
-        user = User(username='john', password='pass', email='john@foo.com')
-        db.session.add(user)
+    def test_income(self):
+        budget = Budget("Plan-A", 1)
+        db.session.add(budget)
         db.session.commit()
 
         # Create a new income
-        self.assertEqual('0.00', user.total_income)
+        self.assertEqual('0.00', budget.total_income)
         income = Income(name='salary', amount=Decimal('4321.09'),
-                user_id=user.id, interval='weekly')
+                budget_id=budget.id, interval='weekly')
         db.session.add(income)
         db.session.commit()
-        self.assertTrue(income in user.incomes)
-
-        income = Income.query.filter(Income.name == 'salary').first()
-        self.assertEquals(income.name, 'salary')
-        self.assertEquals(income.amount, Decimal('4321.09'))
-        self.assertEquals(income.user_id, 1)
+        self.assertTrue(income in budget.incomes)
 
         income2 = Income(name='investment', amount=Decimal('123.0'),
-                user_id=user.id, interval='weekly')
+                budget_id=budget.id, interval='weekly')
         db.session.add(income2)
         db.session.commit()
-        self.assertTrue(income2 in user.incomes)
-        self.assertEquals(2, len(user.incomes)) # lazy 'select' returns list
-        self.assertEquals(user.incomes[0].user, user) # 'backref'
-        self.assertEquals(income2.amount, Decimal('123.0'))
+        self.assertTrue(income2 in budget.incomes)
+        self.assertEquals(2, len(budget.incomes)) # lazy 'select' returns list
+        self.assertEquals(budget.incomes[0].budget, budget) # 'backref'
 
     def test_total_property(self):
         income = Income(name='salary', amount=Decimal('600.0'),
-                user_id=100, interval='weekly')
+                budget_id=100, interval='weekly')
         # Assert with weekly interval total = amount x 4
         self.assertEqual(2400.0, income.total)
 
@@ -63,15 +55,15 @@ class TestSum(base_test.BaseTest):
         self.assertEqual(50.0, income.total)
 
     def test_rounded_total_property(self):
-        income = Income(name='salary', amount=Decimal(2.222), user_id=100,
+        income = Income(name='salary', amount=Decimal(2.222), budget_id=100,
                 interval='weekly')
         self.assertEqual('8.89', income.rounded_total)
-        income = Income(name='salary', amount=Decimal(123.455), user_id=100,
+        income = Income(name='salary', amount=Decimal(123.455), budget_id=100,
                 interval='monthly')
         self.assertEqual('123.45', income.rounded_total)
         income.amount = Decimal(1.200)
         self.assertEqual('1.20', income.rounded_total)
-        income = Income(name='salary', amount=Decimal(120.12), user_id=100,
+        income = Income(name='salary', amount=Decimal(120.12), budget_id=100,
                 interval='yearly')
         self.assertEqual('10.01', income.rounded_total)
 
@@ -82,34 +74,34 @@ class TestSum(base_test.BaseTest):
         self.assertEqual('500.00', round_for_currency(500))
 
     def test_sum_date(self):
-        income = Income(name='salary', amount=Decimal('123'), user_id=100,
+        income = Income(name='salary', amount=Decimal('123'), budget_id=100,
                 interval='weekly')
         income.date_created = datetime.datetime(2000, 12, 28, 04, 50)
         self.assertEqual(income.formatted_date_created, '28-12-2000')
 
     def test_expense(self):
-        user = User(username='john', password='pass', email='john@foo.com')
-        db.session.add(user)
+        budget = Budget("Plan-A", 1)
+        db.session.add(budget)
         db.session.commit()
 
-        self.assertEqual('0.00', user.total_expense)
-        expense = Expense(name='rent', amount=Decimal(1250.0), user_id=user.id,
+        self.assertEqual('0.00', budget.total_expense)
+        expense = Expense(name='rent', amount=Decimal(1250.0), budget_id=budget.id,
                 interval='monthly', shared_by=2)
         self.assertEqual(expense.total, 625.0)
-        expense2 = Expense(name='UPC', amount=Decimal(60.0), user_id=user.id,
+        expense2 = Expense(name='UPC', amount=Decimal(60.0), budget_id=budget.id,
                 interval='monthly', shared_by=2)
         self.assertEqual(expense2.total, 30.0)
         db.session.add(expense)
         db.session.add(expense2)
         db.session.commit()
 
-        self.assertEqual(2, len(user.expenses))
-        self.assertTrue(expense in user.expenses)
-        self.assertTrue(expense in user.expenses)
-        self.assertEqual(expense.user, user)
+        self.assertEqual(2, len(budget.expenses))
+        self.assertTrue(expense in budget.expenses)
+        self.assertTrue(expense in budget.expenses)
+        self.assertEqual(expense.budget, budget)
 
-        self.assertEqual(user.total_expense, '655.00')
+        self.assertEqual(budget.total_expense, '655.00')
 
-        expense3 = Expense(name='Water', amount=Decimal(60.0), user_id=user.id,
+        expense3 = Expense(name='Water', amount=Decimal(60.0), budget_id=budget.id,
                 interval='quarterly', shared_by=2)
         self.assertEqual(expense3.total, 10.0)

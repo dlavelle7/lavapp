@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>Income</h3>
+<h3>Income - {{budget.name}}</h3>
 <h4>Current Monthly Incomes</h4>
 
-{% with models=current_user.incomes, total=current_user.total_income,
+{% with models=budget.incomes, total=budget.total_income,
         delete='delete_income' %}
     {% include "budget_table.html" %}
 {% endwith %}
@@ -43,5 +43,7 @@
     </form>
     </tr>
 </table>
+<a href="{{url_for('budget')}}">Back to budgets</a>
+<a class="pull-right" href="{{url_for('expense', budget_id=budget.id)}}">Edit budget expense</a>
 
 {% endblock %}
